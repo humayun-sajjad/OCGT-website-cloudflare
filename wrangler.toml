@@ -1,4 +1,5 @@
-name = "ocgt-website"
+
+name = 'ocgt-website-cloudflare'
 main = "worker/index.js"
 compatibility_date = "2025-01-01"
 
