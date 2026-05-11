@@ -11,7 +11,12 @@
  */
 
 const MAX_LEN = 2000;
-const ALLOWED_ORIGINS = ['https://ocgt.de', 'https://www.ocgt.de'];
+const DEFAULT_ORIGINS = ['https://ocgt.de', 'https://www.ocgt.de'];
+
+function allowedOrigins(env) {
+  const extra = (env.APP_BASE_URL || '').trim().replace(/\/+$/, '');
+  return extra ? [...DEFAULT_ORIGINS, extra] : DEFAULT_ORIGINS;
+}
 
 export default {
   async fetch(request, env) {
@@ -21,7 +26,7 @@ export default {
       if (request.method === 'OPTIONS') {
         return new Response(null, {
           status: 204,
-          headers: corsHeaders(request.headers.get('Origin') || ''),
+          headers: corsHeaders(request.headers.get('Origin') || '', env),
         });
       }
       if (request.method === 'POST') {
@@ -36,7 +41,7 @@ export default {
 
 async function handleContact(request, env) {
   const origin = request.headers.get('Origin') || '';
-  const cors = corsHeaders(origin);
+  const cors = corsHeaders(origin, env);
 
   let body;
   try {
@@ -120,6 +125,51 @@ async function handleContact(request, env) {
     return json({ error: 'send_failed' }, 502, cors);
   }
 
+  const isEN = /^en/i.test(sanitize(body._lang) || '') || /english|new enquiry/i.test(subject);
+  const confirmSubject = isEN
+    ? 'We received your message — OCGT'
+    : 'Wir haben Ihre Nachricht erhalten — OCGT';
+  const confirmHtml = isEN ? `
+      <p>Hello ${vorname} ${nachname},</p>
+      <p>Thank you for contacting OCGT. We have received your message and will get back to you within 1–2 business days.</p>
+      <p>For reference, here is a copy of what you sent:</p>
+      <blockquote style="border-left:3px solid #ccc;padding:0 12px;color:#555;font-family:Arial,sans-serif;font-size:14px">
+        ${nachricht.replace(/\n/g, '<br>')}
+      </blockquote>
+      <p>Best regards,<br>OCGT — Octacon Geotechnik GmbH</p>
+      <p style="font-size:12px;color:#666">This is an automated confirmation. Please do not reply to this email.</p>
+    ` : `
+      <p>Hallo ${vorname} ${nachname},</p>
+      <p>vielen Dank für Ihre Nachricht. Wir haben Ihre Anfrage erhalten und melden uns innerhalb von 1–2 Werktagen bei Ihnen.</p>
+      <p>Zur Übersicht hier eine Kopie Ihrer Nachricht:</p>
+      <blockquote style="border-left:3px solid #ccc;padding:0 12px;color:#555;font-family:Arial,sans-serif;font-size:14px">
+        ${nachricht.replace(/\n/g, '<br>')}
+      </blockquote>
+      <p>Mit freundlichen Grüßen,<br>OCGT — Octacon Geotechnik GmbH</p>
+      <p style="font-size:12px;color:#666">Dies ist eine automatische Bestätigung. Bitte antworten Sie nicht auf diese E-Mail.</p>
+    `;
+
+  const confirmRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'api-key': apiKey,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      sender: { name: fromName, email: fromEmail },
+      to: [{ email, name: `${vorname} ${nachname}` }],
+      replyTo: { email: toEmail, name: fromName },
+      subject: confirmSubject,
+      htmlContent: confirmHtml,
+    }),
+  });
+
+  if (!confirmRes.ok) {
+    const detail = await confirmRes.text().catch(() => '');
+    console.error('brevo_confirm_failed', confirmRes.status, detail);
+  }
+
   return json({ ok: true }, 200, cors);
 }
 
@@ -135,8 +185,9 @@ function isEmail(s) {
   return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s);
 }
 
-function corsHeaders(origin) {
-  const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+function corsHeaders(origin, env) {
+  const list = allowedOrigins(env);
+  const allow = list.includes(origin) ? origin : list[0];
   return {
     'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',

@@ -18256,7 +18256,7 @@ function showFErr(fid,eid,show){const f=document.getElementById(fid),e=document.
    While this stays empty, the form falls back to the user's mail client
    (mailto:) so leads are not lost — but the UX is worse and bots can scrape
    the email. Replacing this is the single most important pre-launch task. */
-const FORMSPREE_ENDPOINT = '';  // e.g. 'https://formspree.io/f/xyzabc123'
+const FORMSPREE_ENDPOINT = '/api/contact';
 
 async function submitForm(ev) {
   ev.preventDefault();
@@ -18323,6 +18323,7 @@ async function submitForm(ev) {
           leistung: sv, nachricht: msg,
           _subject: isEN ? 'New enquiry — OCGT Website' : 'Neue Anfrage — OCGT Website',
           _replyto: em,
+          _lang: isEN ? 'en' : 'de',
           /* Cloudflare Turnstile token. Empty if widget hasn't been
              configured yet (placeholder site key) — server still rejects
              when TURNSTILE_SECRET is set, otherwise allows for backwards
@@ -18375,10 +18376,21 @@ async function submitForm(ev) {
   let delivered = false;
   if (FORMSPREE_ENDPOINT) {
     delivered = await viaFetch();
-    if (!delivered) viaMailto();
   } else {
     viaMailto();
-    delivered = true;  // mail client opened; treat as user-delivered
+    delivered = true;
+  }
+
+  if (!delivered) {
+    const g = document.getElementById('f-err-global');
+    g.textContent = isEN
+      ? 'Sending failed. Please try again or email info@ocgt.de directly.'
+      : 'Senden fehlgeschlagen. Bitte erneut versuchen oder direkt an info@ocgt.de schreiben.';
+    g.style.display = 'block';
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+    txt.textContent = originalTxt;
+    return;
   }
 
   /* Specific success message echoing the user's own name + email */
@@ -18418,7 +18430,7 @@ async function submitForm(ev) {
   } catch(e){}
   setLang(lang);
   if(cookies)loadAllEmbeds();
-  go('home');
+  routeFromUrl();
 })();
 
 /* ── FAQ ACCORDION ── */
