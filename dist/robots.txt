@@ -1,6 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /ocgt-BUILD-TOOL.html
-Disallow: /ocgt-split-index.html
-
-Sitemap: https://ocgt.de/sitemap.xml
