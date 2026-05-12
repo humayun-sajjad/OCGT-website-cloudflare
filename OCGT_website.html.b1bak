@@ -5381,94 +5381,6 @@ button.hero-x-hud:focus-visible { outline:2px solid #5def95; outline-offset:3px;
   pointer-events:none;
 }
 
-/* b1 page: blend the live-screen into the page background instead of
-   showing it as a floating card. Keeps the inner stage + tabs, drops
-   the card chrome, border, gradient, shadow, and the section-level
-   accent gradient line / radial halo. */
-#p-b1 .live-sec {
-  background:transparent;
-  padding:0;
-}
-#p-b1 .live-sec::before,
-#p-b1 .live-sec::after { content:none; }
-#p-b1 .live-screen {
-  background:transparent;
-  border:0;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-}
-#p-b1 .live-screen-glow { display:none; }
-#p-b1 .live-chrome {
-  background:transparent;
-  border-bottom:0;
-  padding:.5rem 0 1.5rem;
-}
-/* Tabs adopt the main-nav glass-pill design — same gradient, border
-   treatment, backdrop blur and shadow recipe as <nav>. The sliding
-   green knob (.live-tabs::before) is left intact. */
-/* Container: keep media inside the page reading width, with breathing
-   room on small screens. Desktop inherits the 1400px max width. */
-#p-b1 .live-container {
-  padding-left:clamp(0px, 2vw, 1rem);
-  padding-right:clamp(0px, 2vw, 1rem);
-}
-/* Stage: transparent so it sits on the page, with a soft border + rounded
-   corners that define the viewport without re-introducing the dark card. */
-#p-b1 .live-stage {
-  background:transparent;
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:16px;
-  overflow:hidden;
-}
-/* Footer of the live demo: drop the dark card chrome + green border-top
-   so the metric and CTA blend onto the page background. */
-#p-b1 .live-footer {
-  background:transparent;
-  border-top:0;
-  padding:1.25rem 0 0;
-  flex-wrap:wrap;
-  gap:1.25rem;
-}
-/* Tablet — let the footer wrap, give the stage a touch less height. */
-@media (max-width:900px) {
-  #p-b1 .live-stage { border-radius:14px; }
-  #p-b1 .live-footer { padding-top:1rem; }
-}
-/* Mobile — tighter padding, smaller corner radius, text-only tabs. */
-@media (max-width:640px) {
-  #p-b1 .live-chrome { padding:.25rem 0 1rem; }
-  #p-b1 .live-tabs { padding:3px; width:100%; }
-  #p-b1 .live-tab { padding:.55rem .4rem; font-size:.74rem; gap:0; }
-  #p-b1 .live-tab svg { display:none; }     /* drop icons — labels are clearer at this size */
-  #p-b1 .live-stage { border-radius:12px; }
-  #p-b1 .live-footer {
-    flex-direction:column;
-    align-items:stretch;
-    text-align:center;
-    padding-top:1rem;
-    gap:1rem;
-  }
-  #p-b1 .live-footer-cta { width:100%; }
-}
-#p-b1 .live-tabs {
-  padding:4px;
-  background:
-    linear-gradient(180deg, rgba(36,40,48,.14) 0%, rgba(14,16,22,.22) 100%),
-    linear-gradient(135deg, rgba(93,239,149,.03) 0%, transparent 40%, rgba(63,180,195,.03) 100%);
-  border:1px solid rgba(255,255,255,.09);
-  border-top-color:rgba(255,255,255,.22);
-  border-radius:999px;
-  backdrop-filter:blur(32px) saturate(200%);
-  -webkit-backdrop-filter:blur(32px) saturate(200%);
-  box-shadow:
-    0 10px 36px rgba(0,0,0,.42),
-    0 1px 2px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(0,0,0,.18),
-    inset 0 0 0 1px rgba(255,255,255,.04);
-}
-
 /* CHROME — top bar */
 .live-chrome {
   display:flex; align-items:center; justify-content:center;
@@ -14814,211 +14726,15 @@ img, video, iframe, canvas, svg { max-width:100%; }
         </div>
       </div>
     </div>
-    <section class="live-sec rv" aria-label="Live Demo Interaktive 3D-Daten" style="margin:clamp(2.5rem, 5vw, 4rem) 0 clamp(2.5rem, 5vw, 4rem)">
-<div class="live-container">
-      <!-- THE SCREEN — big centered premium monitor -->
-      <div class="live-screen">
-        <!-- Outer glow ring -->
-        <div class="live-screen-glow" aria-hidden="true"></div>
-
-        <!-- Chrome / window bar -->
-        <div class="live-chrome">
-          <!-- Tab switcher -->
-          <div class="live-tabs" role="tablist">
-            <button class="live-tab is-active" data-view="ortho" role="tab" aria-selected="true">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <path d="M1.5 3.5L5 1.5l5 2 3.5-1.5v10L10 13.5l-5-2L1.5 13v-9.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-                <path d="M5 1.5v10M10 3.5v10" stroke="currentColor" stroke-width="1.3"/>
-              </svg>
-              <span>Ortho</span>
-            </button>
-            <button class="live-tab" data-view="pointcloud" role="tab" aria-selected="false">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <circle cx="3" cy="3" r="1.1" fill="currentColor"/>
-                <circle cx="7.5" cy="3" r="1.1" fill="currentColor"/>
-                <circle cx="12" cy="3" r="1.1" fill="currentColor"/>
-                <circle cx="3" cy="7.5" r="1.1" fill="currentColor"/>
-                <circle cx="7.5" cy="7.5" r="1.1" fill="currentColor"/>
-                <circle cx="12" cy="7.5" r="1.1" fill="currentColor"/>
-                <circle cx="3" cy="12" r="1.1" fill="currentColor"/>
-                <circle cx="7.5" cy="12" r="1.1" fill="currentColor"/>
-                <circle cx="12" cy="12" r="1.1" fill="currentColor"/>
-              </svg>
-              <span class="de-only">Punktwolke</span>
-              <span class="en-only">Point Cloud</span>
-            </button>
-            <button class="live-tab" data-view="mesh" role="tab" aria-selected="false">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <path d="M7.5 1.5l5 2.5v6l-5 2.5-5-2.5v-6l5-2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-                <path d="M2.5 4L7.5 6.5l5-2.5M7.5 6.5v6" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
-                <path d="M2.5 4L12.5 10M12.5 4L2.5 10" stroke="currentColor" stroke-width=".9" opacity=".55"/>
-              </svg>
-              <span>Mesh</span>
-            </button>
-            <button class="live-tab" data-view="splat" role="tab" aria-selected="false">
-              <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
-                <circle cx="4" cy="5" r="2.2" fill="currentColor" opacity=".55"/>
-                <circle cx="10.5" cy="4.5" r="1.8" fill="currentColor" opacity=".4"/>
-                <circle cx="7" cy="9" r="2.5" fill="currentColor" opacity=".75"/>
-                <circle cx="11.5" cy="10.5" r="1.5" fill="currentColor" opacity=".5"/>
-                <circle cx="3" cy="11" r="1.4" fill="currentColor" opacity=".45"/>
-              </svg>
-              <span>Splatting</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Stage: iframe viewport — branded OCGT control pill replaces Pix4D's chrome -->
-        <div class="live-stage">
-          <!-- Grid pattern background -->
-          <div class="live-grid" aria-hidden="true"></div>
-
-          <!-- Ortho view -->
-          <div class="live-view is-active" data-view="ortho">
-            <div id="b1-ortho">
-              <div class="live-blocked">
-                <div class="live-blocked-icon">
-                  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                    <path d="M4 10l12-6 12 4 12-4v26l-12 4-12-4-12 4V10z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M16 4v30M28 8v30" stroke="currentColor" stroke-width="1.6"/>
-                  </svg>
-                </div>
-                <h3 class="live-blocked-title">
-                  <span class="de-only">Orthofoto-Viewer</span>
-                  <span class="en-only">Orthomap Viewer</span>
-                </h3>
-                <p class="live-blocked-desc">
-                  <span class="de-only">Akzeptieren Sie Cookies, um das interaktive 2D-Orthofoto direkt im Browser zu erkunden. Zoom, Messung und Pan-Funktionen inklusive.</span>
-                  <span class="en-only">Accept cookies to explore the interactive 2D orthomap directly in the browser. Zoom, measurement and pan functions included.</span>
-                </p>
-                <button class="live-accept-btn" onclick="acceptCookies()">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span class="de-only">Cookies akzeptieren &amp; laden</span>
-                  <span class="en-only">Accept cookies &amp; load</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Point Cloud view -->
-          <div class="live-view" data-view="pointcloud">
-            <div id="b1-pointcloud">
-              <div class="live-blocked">
-                <div class="live-blocked-icon">
-                  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                    <circle cx="9" cy="9" r="2.4" fill="currentColor"/>
-                    <circle cx="22" cy="9" r="2.4" fill="currentColor"/>
-                    <circle cx="35" cy="9" r="2.4" fill="currentColor"/>
-                    <circle cx="9" cy="22" r="2.4" fill="currentColor"/>
-                    <circle cx="22" cy="22" r="2.4" fill="currentColor"/>
-                    <circle cx="35" cy="22" r="2.4" fill="currentColor"/>
-                    <circle cx="9" cy="35" r="2.4" fill="currentColor"/>
-                    <circle cx="22" cy="35" r="2.4" fill="currentColor"/>
-                    <circle cx="35" cy="35" r="2.4" fill="currentColor"/>
-                  </svg>
-                </div>
-                <h3 class="live-blocked-title">
-                  <span class="de-only">Punktwolken-Viewer</span>
-                  <span class="en-only">Point Cloud Viewer</span>
-                </h3>
-                <p class="live-blocked-desc">
-                  <span class="de-only">Akzeptieren Sie Cookies, um die hochaufgelöste 3D-Punktwolke zu erkunden. Millionen Messpunkte mit Farbinformation – navigierbar im Browser.</span>
-                  <span class="en-only">Accept cookies to explore the high-resolution 3D point cloud. Millions of measurement points with colour data – navigable in the browser.</span>
-                </p>
-                <button class="live-accept-btn" onclick="acceptCookies()">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span class="de-only">Cookies akzeptieren &amp; laden</span>
-                  <span class="en-only">Accept cookies &amp; load</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mesh view -->
-          <div class="live-view" data-view="mesh">
-            <div id="b1-mesh">
-              <div class="live-blocked">
-                <div class="live-blocked-icon">
-                  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                    <path d="M22 4l16 8v20l-16 8-16-8V12l16-8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M6 12l16 8 16-8M22 20v20" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                    <path d="M6 12l32 20M38 12L6 32" stroke="currentColor" stroke-width="1.2" opacity=".55"/>
-                  </svg>
-                </div>
-                <h3 class="live-blocked-title">
-                  <span class="de-only">3D Mesh-Viewer</span>
-                  <span class="en-only">3D Mesh Viewer</span>
-                </h3>
-                <p class="live-blocked-desc">
-                  <span class="de-only">Akzeptieren Sie Cookies, um das fotorealistische 3D-Mesh zu erkunden. Rotieren, zoomen und vermessen Sie das Modell direkt im Browser.</span>
-                  <span class="en-only">Accept cookies to explore the photorealistic 3D mesh. Rotate, zoom and measure the model directly in the browser.</span>
-                </p>
-                <button class="live-accept-btn" onclick="acceptCookies()">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span class="de-only">Cookies akzeptieren &amp; laden</span>
-                  <span class="en-only">Accept cookies &amp; load</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Gaussian Splatting view -->
-          <div class="live-view" data-view="splat">
-            <div id="b1-splat">
-              <div class="live-blocked">
-                <div class="live-blocked-icon">
-                  <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                    <circle cx="13" cy="14" r="6.5" fill="currentColor" opacity=".55"/>
-                    <circle cx="30" cy="13" r="5" fill="currentColor" opacity=".4"/>
-                    <circle cx="21" cy="26" r="7.5" fill="currentColor" opacity=".75"/>
-                    <circle cx="33" cy="31" r="4.5" fill="currentColor" opacity=".5"/>
-                    <circle cx="9" cy="32" r="4" fill="currentColor" opacity=".45"/>
-                  </svg>
-                </div>
-                <h3 class="live-blocked-title">
-                  <span class="de-only">Gaussian Splatting-Viewer</span>
-                  <span class="en-only">Gaussian Splatting Viewer</span>
-                </h3>
-                <p class="live-blocked-desc">
-                  <span class="de-only">Akzeptieren Sie Cookies, um das fotorealistische 3D Gaussian Splatting Modell zu erkunden. Maximale visuelle Tiefe – direkt im Browser.</span>
-                  <span class="en-only">Accept cookies to explore the photorealistic 3D Gaussian Splatting model. Maximum visual depth – directly in the browser.</span>
-                </p>
-                <button class="live-accept-btn" onclick="acceptCookies()">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <span class="de-only">Cookies akzeptieren &amp; laden</span>
-                  <span class="en-only">Accept cookies &amp; load</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer / status bar -->
-        <div class="live-footer">
-          <div class="live-footer-metrics">
-            <span class="live-metric">
-              <span class="live-metric-val de-only">Cloud</span>
-              <span class="live-metric-val en-only">Cloud</span>
-              <span class="live-metric-lbl de-only">Plattform</span>
-              <span class="live-metric-lbl en-only">Platform</span>
-            </span>
-          </div>
-          <div class="live-footer-cta">
-            <p class="live-footer-pitch">
-              <span class="de-only">Vorschau zu klein? <em>Drehen, zoomen, vermessen — im Vollbild ohne Limit.</em></span>
-              <span class="en-only">Preview too small? <em>Orbit, zoom, measure — fullscreen, no limits.</em></span>
-            </p>
-            <a href="https://cloud.pix4d.com/site/537406/dataset/2647627/model?shareToken=a607531d-8246-49d9-a760-df60211b6b45" target="_blank" rel="noopener noreferrer" class="live-fullscreen-btn live-fullscreen-btn--cta">
-              <span class="live-fullscreen-spark" aria-hidden="true"></span>
-              <span class="de-only">Im Vollbild öffnen</span>
-              <span class="en-only">Open fullscreen</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-            </a>
-          </div>
-        </div>
+    <div class="demo-grid rv" style="margin-bottom:2.5rem">
+      <div class="demo-frame">
+        <div class="demo-top"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div><span class="demo-lbl de-only">Live — 2D Orthofoto Referenzprojekt</span><span class="demo-lbl en-only">Live — 2D Orthomap Reference Project</span></div>
+        <div id="b1-2d"><div class="demo-blocked"><div style="margin-bottom:0"><img src="logos/Application-Map--Streamline-Kameleon.png" width="48" height="48" alt="" style="width:32px;height:32px;object-fit:contain"></div><p class="de-only">Cookies akzeptieren, um den 2D-Viewer zu laden.</p><p class="en-only">Accept cookies to load the 2D viewer.</p><button class="btn-o" style="font-size:.8rem;padding:.45rem 1rem;margin-top:.5rem" onclick="acceptCookies()" data-de="Laden" data-en="Load">Laden</button></div></div>
       </div>
-    </div>
-    </section>
+      <div class="demo-frame">
+        <div class="demo-top"><div class="demo-dot" style="background:#ff5f57"></div><div class="demo-dot" style="background:#febc2e"></div><div class="demo-dot" style="background:#28c840"></div><span class="demo-lbl de-only">Live — 3D Mesh Referenzprojekt</span><span class="demo-lbl en-only">Live — 3D Mesh Reference Project</span></div>
+        <div id="b1-3d"><div class="demo-blocked"><div style="margin-bottom:0"><img src="logos/3d-File--Streamline-Kameleon.png" width="48" height="48" alt="" style="width:32px;height:32px;object-fit:contain"></div><p class="de-only">Cookies akzeptieren, um den 3D-Viewer zu laden.</p><p class="en-only">Accept cookies to load the 3D viewer.</p><button class="btn-o" style="font-size:.8rem;padding:.45rem 1rem;margin-top:.5rem" onclick="acceptCookies()" data-de="Laden" data-en="Load">Laden</button></div></div>
+      </div>
     </div>
     <!-- VIDEO: Drone mapping pipeline -->
     <div class="rv" style="margin-bottom:2.5rem">
@@ -18461,13 +18177,13 @@ function loadAllEmbeds() {
   const ep=document.getElementById('e-pointcloud'); if(ep&&!ep.querySelector('iframe')) ep.innerHTML = EMBED_POINTCLOUD || pendingViewerHTML('Punktwolken-Viewer','Point cloud viewer');
   const em=document.getElementById('e-mesh');       if(em&&!em.querySelector('iframe')) em.innerHTML = EMBED_MESH || pendingViewerHTML('3D Mesh-Viewer','3D mesh viewer');
   const es=document.getElementById('e-splat');      if(es&&!es.querySelector('iframe')) es.innerHTML = EMBED_SPLAT || pendingViewerHTML('Gaussian Splatting Viewer','Gaussian Splatting viewer');
-  const bo=document.getElementById('b1-ortho');      if(bo&&!bo.querySelector('iframe')) bo.innerHTML = EMBED_ORTHO      || pendingViewerHTML('Orthofoto-Viewer','Orthomap viewer');
-  const bp=document.getElementById('b1-pointcloud'); if(bp&&!bp.querySelector('iframe')) bp.innerHTML = EMBED_POINTCLOUD || pendingViewerHTML('Punktwolken-Viewer','Point cloud viewer');
-  const bm=document.getElementById('b1-mesh');       if(bm&&!bm.querySelector('iframe')) bm.innerHTML = EMBED_MESH       || pendingViewerHTML('3D Mesh-Viewer','3D mesh viewer');
-  const bs=document.getElementById('b1-splat');      if(bs&&!bs.querySelector('iframe')) bs.innerHTML = EMBED_SPLAT      || pendingViewerHTML('Gaussian Splatting Viewer','Gaussian Splatting viewer');
+  ['b1-2d'].forEach(id => { const el=document.getElementById(id); if(el&&!el.querySelector('iframe')) el.innerHTML=PIX4D_2D; });
+  ['b1-3d'].forEach(id => { const el=document.getElementById(id); if(el&&!el.querySelector('iframe')) el.innerHTML=PIX4D_3D; });
   const rp=document.getElementById('refs-pix4d'); if(rp&&!rp.querySelector('iframe')) rp.innerHTML=PIX4D_REF;
 }
 function loadB1Embeds() {
+  const e2=document.getElementById('b1-2d'); if(e2&&!e2.querySelector('iframe')) e2.innerHTML=PIX4D_2D;
+  const e3=document.getElementById('b1-3d'); if(e3&&!e3.querySelector('iframe')) e3.innerHTML=PIX4D_3D;
 }
 function scrollToDemo() {
   document.getElementById('demo-anchor').scrollIntoView({behavior:'smooth'});
@@ -19587,7 +19303,8 @@ document.body.classList.remove('has-announce');
 
 /* ── LIVE DEMO — 2D/3D tab switcher with cross-fade (iOS segmented control) ── */
 (function(){
-  document.querySelectorAll('.live-sec').forEach(function(sec){
+  const sec = document.querySelector('.live-sec');
+  if(!sec) return;
   const tabsContainer = sec.querySelector('.live-tabs');
   const tabs = sec.querySelectorAll('.live-tab');
   const views = sec.querySelectorAll('.live-view');
@@ -19622,7 +19339,6 @@ document.body.classList.remove('has-announce');
         if(nextTab) nextTab.focus();
       }
     });
-  });
   });
 
 })();
