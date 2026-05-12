@@ -317,10 +317,17 @@ def main():
     # ── Wrap <img> in <picture> with AVIF + WebP sources ─────────────────
     # Browser picks the smallest format it supports. JPG/PNG kept as fallback.
     # Self-closing and existing <picture> wrappers are left alone.
+    #
+    # SKIP cross-origin images we don't control (YouTube thumbs, etc.) —
+    # YouTube's i.ytimg.com only serves .jpg/.webp, NOT .avif, so requesting
+    # `.../hqdefault.avif` would 404 on every page load. Same for any other
+    # external host we don't own.
     IMG_WRAP_RE = re.compile(
         r'<img\b(?P<pre>[^>]*?)\bsrc="(?P<src>[^"]+\.(?:jpe?g|png))"(?P<post>[^>]*?)>',
         re.IGNORECASE,
     )
+    # Hosts where we can't guarantee .avif / .webp variants exist
+    EXTERNAL_HOSTS_SKIP = ('ytimg.com', 'youtube.com', 'googleusercontent.com')
     def wrap_pictures(text: str) -> str:
         # Skip rewriting if an <img> is already inside a <picture> (idempotent).
         def repl(m):
@@ -329,6 +336,9 @@ def main():
             if '<picture' in window and '</picture' not in window:
                 return m.group(0)
             src = m.group('src')
+            # Skip external hosts that don't serve .avif/.webp variants
+            if any(host in src for host in EXTERNAL_HOSTS_SKIP):
+                return m.group(0)
             base = src.rsplit('.', 1)[0]
             return (
                 f'<picture>'

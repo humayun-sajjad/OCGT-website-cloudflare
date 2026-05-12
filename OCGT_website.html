@@ -943,11 +943,13 @@ body.hov .cur-dot { transform:translate(-50%,-50%) scale(1.5); }
 .grain { position:fixed; inset:0; z-index:9997; pointer-events:none; opacity:.022; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); mix-blend-mode:overlay; }
 
 /* ── PAGE SYSTEM ── */
+/* Pages are toggled by JS adding/removing `.on`. We use display only — no
+   entrance animation. A prior `animation: fadeUp .4s ease` keyframed
+   `from { opacity:0 }` and got stuck on initial load in some browsers,
+   leaving deep-linked pages permanently invisible. Hard lesson: don't
+   animate the route container on every navigation. */
 .page { display:none; }
-.page.on { display:block; animation:fadeUp .4s ease; }
-/* Opacity-only entrance — transforms on .page.on break position:fixed descendants
-   (fixed elements would follow the translate during the 0.4s animation). */
-@keyframes fadeUp { from{opacity:0} to{opacity:1} }
+.page.on { display:block; }
 
 /* ── REVEAL ON SCROLL ── */
 .rv { opacity:0; transform:translateY(20px); transition:opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); }
@@ -11101,11 +11103,11 @@ img, video, iframe, canvas, svg { max-width:100%; }
 
 </style>
 <!-- Performance: instant hero paint.
-     1. Poster (259 KB JPG) preloaded at high priority — paints in the first 50 ms.
-     2. First 1–2 MB of the video preloaded so playback starts the instant <video> sees it. -->
+     Poster (259 KB JPG) preloaded at high priority — paints in the first 50 ms.
+     Video preloading is handled by <video preload="auto"> on the element itself
+     (the <link rel="preload" as="video"> form is not in the HTML spec — Chromium
+     warns "uses an unsupported as value" and ignores it). -->
 <link rel="preload" as="image" href="Videos/Hero_final-poster.jpg" fetchpriority="high">
-<link rel="preload" as="video" href="Videos/Hero_final-1080.mp4" type="video/mp4" media="(min-width: 769px)">
-<link rel="preload" as="video" href="Videos/Hero_final-720.mp4"  type="video/mp4" media="(max-width: 768px)">
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" integrity="sha384-GPb5RlngihS9H0z1D137JsvzmeZ7tCpWEF4t5YDoTZyMsPP8S7h7vFDh4XhheU83" crossorigin="anonymous" defer></script>
 <!-- Cloudflare Turnstile — invisible CAPTCHA for the contact form (#form).
      Free, GDPR-friendly (no PII collected), works without third-party cookies. -->
@@ -14107,6 +14109,7 @@ img, video, iframe, canvas, svg { max-width:100%; }
       </p>
     </div>
   </div>
+  </div><!-- /.testi-light.testi-light--marquee -->
 
   <!-- FAQ ACCORDION -->
   <div class="usp-strip full-sec">
