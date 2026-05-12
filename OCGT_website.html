@@ -4756,8 +4756,43 @@ button.hero-x-hud:focus-visible { outline:2px solid #5def95; outline-offset:3px;
   .how-frame-visual img { transition:none; transform:none !important; }
 }
 
-/* Mobile — stack frame content */
-@media (max-width:900px) {
+/* Mobile / phone — kill scroll-jacking cinema mode; stack frames as
+   natural page content. iOS Chrome's dynamic toolbar makes 100svh
+   sticky elements jumpy, so we drop sticky + the 350vh scroll length
+   entirely below 768px. Frames render sequentially with normal scroll. */
+@media (max-width:768px) {
+  .how-cinema {
+    height:auto;
+    position:relative;
+  }
+  .how-cinema-sticky {
+    position:static;
+    height:auto;
+    min-height:0;
+    padding:clamp(5rem, 10vh, 6rem) clamp(1rem, 4vw, 1.5rem) clamp(2rem, 6vh, 3.5rem);
+    gap:1.5rem;
+  }
+  .how-frames { height:auto; max-height:none; display:flex; flex-direction:column; gap:1.25rem; }
+  .how-frame {
+    grid-area:auto !important;
+    opacity:1 !important;
+    transform:none !important;
+    pointer-events:auto !important;
+    transition:none !important;
+    grid-template-columns:1fr;
+    grid-template-areas:"visual" "text";
+    gap:1rem;
+    padding:clamp(.85rem, 3vw, 1.25rem);
+    height:auto;
+    align-items:start;
+  }
+  /* Hide the scroll-progress + carousel dots since all frames are now visible. */
+  .how-cinema-progress,
+  .how-cinema-dots { display:none; }
+}
+
+/* Tablet — keep cinema mode but smaller scroll length */
+@media (min-width:769px) and (max-width:900px) {
   .how-cinema { height:350vh; }
   .how-cinema-sticky {
     padding-top:clamp(4.5rem, 8vh, 6rem);
@@ -13593,210 +13628,483 @@ img, video, iframe, canvas, svg { max-width:100%; }
     </div>
   </div>
 
-  <!-- TESTIMONIALS — light background for contrast -->
+  <!-- GOOGLE REVIEWS — featured card + verified marquee -->
+  <style>
+    /* Initials avatar variant */
+    .testi-card-av--initials{
+      font-family:'Source Sans 3','Myriad Pro',var(--f-head);
+      font-size:.78rem;font-weight:700;
+      color:rgba(248,248,224,.92);
+      letter-spacing:.02em;
+    }
+    [data-theme="light"] .testi-card-av--initials{color:rgba(26,26,30,.85)}
+
+    /* Google G logo corner badge */
+    .testi-card-google{position:absolute;top:1rem;left:1.2rem;width:18px;height:18px;opacity:.65;pointer-events:none}
+    .testi-card-google svg{width:100%;height:100%;display:block}
+    .testi-card{padding-top:2.4rem}
+
+    /* Aggregate badge under H2 */
+    .gbp-aggregate{
+      display:inline-flex;align-items:center;gap:.65rem;flex-wrap:wrap;
+      margin-top:.25rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:.78rem;letter-spacing:.04em;
+      color:var(--muted);
+      padding:.55rem .95rem;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--b);
+      border-radius:999px;
+    }
+    [data-theme="light"] .gbp-aggregate{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08)}
+    .gbp-aggregate .g-logo{width:16px;height:16px;flex-shrink:0}
+    .gbp-aggregate .g-score{font-weight:700;color:var(--text);font-size:.95rem;font-family:var(--f-head);letter-spacing:-.02em}
+    .gbp-aggregate .g-stars{color:#fbbc04;letter-spacing:1px;font-size:.85rem}
+    .gbp-aggregate .g-sep{opacity:.4}
+
+    /* Footnote link */
+    .gbp-cta{
+      display:inline-flex;align-items:center;gap:.45rem;
+      color:#5def95;text-decoration:none;
+      font-family:'Source Sans 3','Myriad Pro',var(--f-head);
+      font-weight:600;font-size:.92rem;
+      transition:color .25s ease, transform .25s ease;
+    }
+    .gbp-cta:hover{color:#7af5a8;transform:translateX(2px)}
+    [data-theme="light"] .gbp-cta{color:#1a73e8}
+    [data-theme="light"] .gbp-cta:hover{color:#0c5fc4}
+
+    /* ========== FEATURED CARD ========== */
+    .gbp-featured{
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:3rem;
+      align-items:stretch;
+      background:var(--bg1);
+      border:1px solid var(--b);
+      border-radius:24px;
+      padding:2.5rem;
+      margin-top:clamp(2rem,4vw,3rem);
+      box-shadow:0 24px 64px rgba(0,0,0,.35);
+    }
+    [data-theme="light"] .gbp-featured{
+      background:rgba(255,255,255,.92);
+      border-color:rgba(0,0,0,.08);
+      box-shadow:0 24px 64px rgba(0,0,0,.08);
+    }
+    .gbp-featured-agg{
+      text-align:center;
+      border-right:1px solid var(--b);
+      padding-right:2.5rem;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    [data-theme="light"] .gbp-featured-agg{border-right-color:rgba(0,0,0,.08)}
+    .gbp-featured-agg .g-mark{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:.85rem}
+    .gbp-featured-agg .g-mark svg{width:18px;height:18px}
+    .gbp-featured-agg .big-score{font-family:var(--f-head);font-weight:700;font-size:4.5rem;line-height:1;letter-spacing:-.04em;color:var(--text)}
+    .gbp-featured-agg .big-stars{display:flex;justify-content:center;gap:3px;margin:.6rem 0 .5rem}
+    .gbp-featured-agg .big-stars svg{width:20px;height:20px;fill:#fbbc04}
+    .gbp-featured-agg .big-count{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+    .gbp-featured-cta{
+      display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+      margin:1.25rem auto 0;
+      padding:.7rem 1.4rem;
+      border-radius:999px;
+      background:linear-gradient(135deg,#5def95,#3fb4c3);
+      color:#0a1015;font-weight:700;font-size:.85rem;
+      text-decoration:none;
+      font-family:'Source Sans 3','Myriad Pro',var(--f-head);
+      transition:transform .25s ease, box-shadow .25s ease;
+      box-shadow:0 6px 22px rgba(93,239,149,.25);
+    }
+    .gbp-featured-cta:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(93,239,149,.4)}
+
+    .gbp-featured-stage{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:240px}
+    .gbp-featured-list{position:relative;flex:1;min-height:200px}
+    .gbp-featured-item{
+      position:absolute;inset:0;
+      display:flex;flex-direction:column;justify-content:center;gap:1.25rem;
+      padding-left:.5rem;
+      opacity:0;
+      transition:opacity .35s ease;
+      pointer-events:none;
+    }
+    .gbp-featured-item.active{opacity:1;pointer-events:auto}
+    .gbp-featured-quote{
+      font-family:'DM Sans','Source Sans 3',system-ui,sans-serif;
+      font-size:1.05rem;line-height:1.65;font-style:italic;
+      color:rgba(248,248,224,.9);
+      margin:0;position:relative;
+    }
+    [data-theme="light"] .gbp-featured-quote{color:rgba(26,26,30,.82)}
+    .gbp-featured-quote::before{
+      content:'"';
+      position:absolute;left:-.65rem;top:-1.75rem;
+      font-family:'Fraunces',Georgia,serif;font-size:3.5rem;line-height:1;font-weight:700;
+      background:linear-gradient(135deg,#5def95,#3fb4c3,#2684e9);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      opacity:.5;pointer-events:none;
+    }
+    .gbp-featured-by{display:flex;align-items:center;gap:.85rem}
+    .gbp-featured-by .av{
+      width:42px;height:42px;border-radius:50%;
+      background:linear-gradient(135deg,rgba(93,239,149,.18),rgba(38,132,233,.14));
+      border:1px solid rgba(93,239,149,.3);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Source Sans 3',var(--f-head);font-weight:700;font-size:.82rem;
+      color:rgba(248,248,224,.92);
+    }
+    [data-theme="light"] .gbp-featured-by .av{color:rgba(26,26,30,.85);background:linear-gradient(135deg,rgba(93,239,149,.12),rgba(38,132,233,.08))}
+    .gbp-featured-by .n{font-family:'Source Sans 3','Myriad Pro',var(--f-head);font-weight:700;font-size:.92rem;color:var(--text);line-height:1.2}
+    .gbp-featured-by .w{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-top:.2rem}
+    .gbp-featured-by .gl{margin-left:auto;display:inline-flex;align-items:center;gap:.3rem;color:#5def95;text-decoration:none;font-family:'Source Sans 3',var(--f-head);font-size:.78rem;font-weight:600;white-space:nowrap}
+    .gbp-featured-by .gl:hover{text-decoration:underline}
+    [data-theme="light"] .gbp-featured-by .gl{color:#1a73e8}
+
+    .gbp-featured-controls{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-top:1.5rem;padding-top:1.25rem;
+      border-top:1px solid var(--b);
+    }
+    [data-theme="light"] .gbp-featured-controls{border-top-color:rgba(0,0,0,.08)}
+    .gbp-featured-counter{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--dim);letter-spacing:.04em}
+    .gbp-featured-counter strong{color:var(--text);font-weight:700}
+    .gbp-featured-arrows{display:flex;gap:.5rem}
+    .gbp-featured-arr{
+      width:36px;height:36px;border-radius:50%;
+      border:1px solid var(--b);background:transparent;
+      color:var(--muted);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .2s ease;
+    }
+    .gbp-featured-arr:hover{background:rgba(93,239,149,.12);border-color:rgba(93,239,149,.4);color:#5def95}
+    .gbp-featured-arr svg{width:14px;height:14px}
+    [data-theme="light"] .gbp-featured-arr{border-color:rgba(0,0,0,.12)}
+
+    @media (max-width:880px){
+      .gbp-featured{grid-template-columns:1fr;gap:1.75rem;padding:1.75rem}
+      .gbp-featured-agg{border-right:none;border-bottom:1px solid var(--b);padding:0 0 1.75rem}
+      [data-theme="light"] .gbp-featured-agg{border-bottom-color:rgba(0,0,0,.08)}
+      .gbp-featured-agg .big-score{font-size:3.5rem}
+      .gbp-featured-quote{font-size:.95rem}
+      .gbp-featured-by .gl{display:none}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .gbp-featured-item{transition:none}
+      .gbp-featured-cta:hover{transform:none}
+    }
+  </style>
   <div class="testi-light testi-light--marquee">
     <div style="max-width:1400px;margin:0 auto">
       <div class="rv">
-        <div class="lbl" data-de="Kundenstimmen" data-en="Client Testimonials">Kundenstimmen</div>
+        <div class="lbl" data-de="Google Bewertungen" data-en="Google Reviews">Google Bewertungen</div>
         <h2 class="ttl" data-de="Was unsere Auftraggeber sagen" data-en="What our clients say">Was unsere Auftraggeber sagen</h2>
+        <div class="gbp-aggregate" role="img" aria-label="5.0 von 5 Sternen auf Google, 17 verifizierte Bewertungen">
+          <svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span class="g-score">5.0</span>
+          <span class="g-stars" aria-hidden="true">★★★★★</span>
+          <span class="g-sep">·</span>
+          <span data-de="17 verifizierte Bewertungen" data-en="17 verified reviews">17 verifizierte Bewertungen</span>
+        </div>
       </div>
 
-      <!-- INFINITE MARQUEE — 2 rows moving opposite directions -->
+      <!-- FEATURED CARD — aggregate + rotating top reviews -->
+      <div class="gbp-featured" data-gbp-carousel>
+        <div class="gbp-featured-agg">
+          <div class="g-mark">
+            <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            <span data-de="Google Bewertungen" data-en="Google Reviews">Google Bewertungen</span>
+          </div>
+          <div class="big-score">5.0</div>
+          <div class="big-stars" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.75l-6 5.847L19.336 24 12 19.897 4.664 24 6 15.597 0 9.75l8.332-1.595z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.75l-6 5.847L19.336 24 12 19.897 4.664 24 6 15.597 0 9.75l8.332-1.595z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.75l-6 5.847L19.336 24 12 19.897 4.664 24 6 15.597 0 9.75l8.332-1.595z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.75l-6 5.847L19.336 24 12 19.897 4.664 24 6 15.597 0 9.75l8.332-1.595z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568L24 9.75l-6 5.847L19.336 24 12 19.897 4.664 24 6 15.597 0 9.75l8.332-1.595z"/></svg>
+          </div>
+          <div class="big-count" data-de="17 verifizierte Bewertungen" data-en="17 verified reviews">17 verifizierte Bewertungen</div>
+          <a class="gbp-featured-cta" href="https://share.google/QjWrlLZ9IeRkWU8em" target="_blank" rel="noopener" data-de="Alle Bewertungen ansehen →" data-en="View all reviews →">Alle Bewertungen ansehen →</a>
+        </div>
+        <div class="gbp-featured-stage">
+          <div class="gbp-featured-list" aria-live="polite">
+            <div class="gbp-featured-item active">
+              <p class="gbp-featured-quote de-only" lang="de">Die Kollegen der OCGT unterstützen uns regelmäßig auf der Baustelle – sowohl in der Geotechnik als auch bei Inspektionen schwer zugänglicher Bereiche. Die Drohnenpiloten arbeiten sauber, sicher und liefern extrem detaillierte Bilder.</p>
+              <p class="gbp-featured-quote en-only">OCGT's team regularly supports us on site — both in geotechnics and inspections of hard-to-reach areas. The drone pilots work cleanly, safely and deliver extremely detailed imagery.</p>
+              <div class="gbp-featured-by">
+                <div class="av">OR</div>
+                <div><div class="n">Oskar Ritter</div><div class="w" data-de="vor 5 Monaten · ★★★★★" data-en="5 months ago · ★★★★★">vor 5 Monaten · ★★★★★</div></div>
+              </div>
+            </div>
+            <div class="gbp-featured-item">
+              <p class="gbp-featured-quote de-only" lang="de">Meine Erfahrungen mit Octacon Geotechnik GmbH waren äußerst positiv. Manuel und sein Team haben sich als äußerst zuverlässig erwiesen, indem sie meine 3D-Scanning-Projekte stets termingerecht und präzise umgesetzt haben.</p>
+              <p class="gbp-featured-quote en-only">My experience with Octacon Geotechnik GmbH has been extremely positive. Manuel and his team have proven exceptionally reliable, delivering my 3D-scanning projects on time and with precision.</p>
+              <div class="gbp-featured-by">
+                <div class="av">TM</div>
+                <div><div class="n">Tom</div><div class="w" data-de="vor 2 Jahren · ★★★★★" data-en="2 years ago · ★★★★★">vor 2 Jahren · ★★★★★</div></div>
+              </div>
+            </div>
+            <div class="gbp-featured-item">
+              <p class="gbp-featured-quote de-only" lang="de">Wir haben unser gesamtes Restaurant auf zwei Stockwerken von der OCGT in 3D scannen und die resultierende 360°-Tour auf Googlemaps stellen lassen. Die Jungs waren nicht nur schnell und mega freundlich, sondern unterstützen uns seitdem auch.</p>
+              <p class="gbp-featured-quote en-only">We had OCGT 3D-scan our entire two-storey restaurant and publish the resulting 360° tour on Google Maps. The team was fast and incredibly friendly — and they've supported us ever since.</p>
+              <div class="gbp-featured-by">
+                <div class="av">LM</div>
+                <div><div class="n">Laila Melcher</div><div class="w" data-de="vor 2 Jahren · ★★★★★" data-en="2 years ago · ★★★★★">vor 2 Jahren · ★★★★★</div></div>
+              </div>
+            </div>
+            <div class="gbp-featured-item">
+              <p class="gbp-featured-quote de-only" lang="de">Wir sind begeistert. Die Technik von Octacon bringt unsere Kreativität auf ein neues Level. Vom ersten Kontakt bis zum Schluss, freundlich, kompetent, wunderbar. Die Ergebnisse sind grossartig.</p>
+              <p class="gbp-featured-quote en-only">We are thrilled. Octacon's technology takes our creativity to a new level. From first contact to delivery — friendly, competent, wonderful. The results are outstanding.</p>
+              <div class="gbp-featured-by">
+                <div class="av">GL</div>
+                <div><div class="n">Giullia Levinston</div><div class="w" data-de="vor 2 Jahren · ★★★★★" data-en="2 years ago · ★★★★★">vor 2 Jahren · ★★★★★</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="gbp-featured-controls">
+            <div class="gbp-featured-counter"><strong data-gbp-idx>1</strong> / <span data-gbp-total>4</span></div>
+            <div class="gbp-featured-arrows">
+              <button class="gbp-featured-arr" type="button" data-gbp-dir="-1" aria-label="Vorherige Bewertung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button class="gbp-featured-arr" type="button" data-gbp-dir="1" aria-label="Nächste Bewertung"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        (function(){
+          const card = document.querySelector('[data-gbp-carousel]');
+          if(!card) return;
+          const items = card.querySelectorAll('.gbp-featured-item');
+          const idxEl = card.querySelector('[data-gbp-idx]');
+          const totalEl = card.querySelector('[data-gbp-total]');
+          const arrows = card.querySelectorAll('[data-gbp-dir]');
+          const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          let idx = 0, timer;
+          totalEl.textContent = items.length;
+          const show = i => {
+            idx = (i + items.length) % items.length;
+            items.forEach((el, n) => el.classList.toggle('active', n === idx));
+            idxEl.textContent = idx + 1;
+          };
+          const auto = () => { if(reduced) return; clearInterval(timer); timer = setInterval(() => show(idx + 1), 6500); };
+          arrows.forEach(a => a.addEventListener('click', () => { show(idx + (+a.dataset.gbpDir)); auto(); }));
+          card.addEventListener('mouseenter', () => clearInterval(timer));
+          card.addEventListener('mouseleave', auto);
+          auto();
+        })();
+      </script>
+
+      <!-- INFINITE MARQUEE — single strip of all 10 real Google reviews -->
       <div class="testi-marquee">
         <!-- Row 1 — moves left -->
         <div class="testi-marquee-row">
           <div class="testi-marquee-track">
-            <!-- Set A -->
+            <!-- Set A: 5 real Google reviews -->
             <div class="testi-card">
-              <blockquote class="de-only">„Präzise Arbeit, pünktliche Lieferung und ausgezeichnete Kommunikation. OCGT hat unsere Erwartungen bei der Bauüberwachung deutlich übertroffen."</blockquote>
-              <blockquote class="en-only">"Precise work, punctual delivery and excellent communication. OCGT significantly exceeded our expectations in construction supervision."</blockquote>
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Die Kollegen der OCGT unterstützen uns regelmäßig auf der Baustelle – sowohl in der Geotechnik als auch bei Inspektionen schwer zugänglicher Bereiche. Die Drohnenpiloten arbeiten sauber, sicher und liefern extrem detaillierte Bilder."</blockquote>
+              <blockquote class="en-only">"OCGT's team regularly supports us on site — both in geotechnics and inspections of hard-to-reach areas. The drone pilots work cleanly, safely and deliver extremely detailed imagery."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Construction-Helm--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
+                <div class="testi-card-av testi-card-av--initials">OR</div>
                 <div>
-                  <div class="testi-card-name">Projektleitung</div>
-                  <div class="testi-card-role">Bauunternehmen Berlin · Spezialtiefbau</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card">
-              <blockquote class="de-only">„Die 3D-Drohnenvermessung hat uns bei der Massenermittlung enorm geholfen und mehrfach ungerechtfertigte Nachtragsforderungen entkräftet."</blockquote>
-              <blockquote class="en-only">"The 3D drone surveying helped us enormously with volume calculations and repeatedly disproved unjustified additional claims."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Ruler-Triangle--Streamline-Ultimate.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name">Bauleitung</div>
-                  <div class="testi-card-role">Ingenieurbüro Brandenburg · Erdarbeiten</div>
+                  <div class="testi-card-name">Oskar Ritter</div>
+                  <div class="testi-card-role" data-de="vor 5 Monaten · Google" data-en="5 months ago · Google">vor 5 Monaten · Google</div>
                 </div>
               </div>
             </div>
             <div class="testi-card">
-              <blockquote class="de-only">„Als Vermessungsbüro schätzen wir die Qualität der Orthophotos und Punktwolken von OCGT. Nahtlose Integration in unsere GIS-Workflows."</blockquote>
-              <blockquote class="en-only">"As a surveying office, we value the quality of OCGT's orthophotos and point clouds. Seamless integration into our GIS workflows."</blockquote>
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben ein 3D Modell unseres 140 Jahre alten Hauses erstellen lassen, als Grundlage für einen Umbau. Die Firma arbeitet absolut professionell, wir waren mit dem Ergebnis sehr zufrieden."</blockquote>
+              <blockquote class="en-only">"We commissioned a 3D model of our 140-year-old house as the basis for a renovation. The company works absolutely professionally — we were very satisfied with the result."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Compass--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
+                <div class="testi-card-av testi-card-av--initials">FM</div>
                 <div>
-                  <div class="testi-card-name" data-de="Geschäftsführer" data-en="Managing Director">Geschäftsführer</div>
-                  <div class="testi-card-role" data-de="Vermessungsbüro Berlin" data-en="Surveying Office Berlin">Vermessungsbüro Berlin</div>
+                  <div class="testi-card-name">Florian Malzer</div>
+                  <div class="testi-card-role" data-de="vor 7 Monaten · Google" data-en="7 months ago · Google">vor 7 Monaten · Google</div>
                 </div>
               </div>
             </div>
             <div class="testi-card">
-              <blockquote class="de-only">„Die Grundwasserüberwachung durch OCGT gibt uns die Sicherheit für unsere Tiefbauarbeiten. Kompetente Betreuung und lückenlose Dokumentation."</blockquote>
-              <blockquote class="en-only">"OCGT's groundwater monitoring gives us the assurance we need for our deep construction work. Competent support and thorough documentation."</blockquote>
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wer jemanden sucht, der out of the box denkt und handelt, ist hier richtig. Ich wurde freundlich und professionell beraten, immer gerne wieder. 👍"</blockquote>
+              <blockquote class="en-only">"If you're looking for someone who thinks and acts outside the box, this is the right place. Friendly, professional advice — happy to come back. 👍"</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Globe--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
+                <div class="testi-card-av testi-card-av--initials">KL</div>
                 <div>
-                  <div class="testi-card-name" data-de="Oberbauleiter" data-en="Senior Site Manager">Oberbauleiter</div>
-                  <div class="testi-card-role" data-de="Generalunternehmer Berlin-Mitte" data-en="General contractor Berlin-Mitte">Generalunternehmer Berlin-Mitte</div>
+                  <div class="testi-card-name">Kerstin Lüder</div>
+                  <div class="testi-card-role" data-de="vor 5 Monaten · Google" data-en="5 months ago · Google">vor 5 Monaten · Google</div>
                 </div>
               </div>
             </div>
-            <!-- Duplicate Set A for seamless loop -->
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Präzise Arbeit, pünktliche Lieferung und ausgezeichnete Kommunikation. OCGT hat unsere Erwartungen bei der Bauüberwachung deutlich übertroffen."</blockquote>
-              <blockquote class="en-only">"Precise work, punctual delivery and excellent communication. OCGT significantly exceeded our expectations in construction supervision."</blockquote>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Super aufbereitete Ergebnisse aus Drohnenvermessung. Baufortschrittsdokumentationen sind sehr hilfreich für den Projektalltag."</blockquote>
+              <blockquote class="en-only">"Brilliantly prepared drone-survey results. Construction-progress documentation is genuinely useful in day-to-day project work."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Construction-Helm--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
+                <div class="testi-card-av testi-card-av--initials">SA</div>
                 <div>
-                  <div class="testi-card-name">Projektleitung</div>
-                  <div class="testi-card-role">Bauunternehmen Berlin · Spezialtiefbau</div>
+                  <div class="testi-card-name">Sim Alo</div>
+                  <div class="testi-card-role" data-de="vor 4 Monaten · Google" data-en="4 months ago · Google">vor 4 Monaten · Google</div>
                 </div>
               </div>
             </div>
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Die 3D-Drohnenvermessung hat uns bei der Massenermittlung enorm geholfen und mehrfach ungerechtfertigte Nachtragsforderungen entkräftet."</blockquote>
-              <blockquote class="en-only">"The 3D drone surveying helped us enormously with volume calculations and repeatedly disproved unjustified additional claims."</blockquote>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Meine Erfahrungen mit Octacon Geotechnik GmbH waren äußerst positiv. Manuel und sein Team haben sich als äußerst zuverlässig erwiesen, indem sie meine 3D-Scanning-Projekte stets termingerecht und präzise umgesetzt haben."</blockquote>
+              <blockquote class="en-only">"My experience with Octacon Geotechnik GmbH has been extremely positive. Manuel and his team have proven exceptionally reliable, delivering my 3D-scanning projects on time and with precision."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Ruler-Triangle--Streamline-Ultimate.png" width="48" height="48" alt="" aria-hidden="true"></div>
+                <div class="testi-card-av testi-card-av--initials">TM</div>
                 <div>
-                  <div class="testi-card-name">Bauleitung</div>
-                  <div class="testi-card-role">Ingenieurbüro Brandenburg · Erdarbeiten</div>
+                  <div class="testi-card-name">Tom</div>
+                  <div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div>
                 </div>
               </div>
             </div>
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Als Vermessungsbüro schätzen wir die Qualität der Orthophotos und Punktwolken von OCGT. Nahtlose Integration in unsere GIS-Workflows."</blockquote>
-              <blockquote class="en-only">"As a surveying office, we value the quality of OCGT's orthophotos and point clouds. Seamless integration into our GIS workflows."</blockquote>
+
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir sind begeistert. Die Technik von Octacon bringt unsere Kreativität auf ein neues Level. Vom ersten Kontakt bis zum Schluss, freundlich, kompetent, wunderbar. Die Ergebnisse sind grossartig."</blockquote>
+              <blockquote class="en-only">"We are thrilled. Octacon's technology takes our creativity to a new level. From first contact to delivery — friendly, competent, wonderful. The results are outstanding."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Compass--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Geschäftsführer" data-en="Managing Director">Geschäftsführer</div>
-                  <div class="testi-card-role" data-de="Vermessungsbüro Berlin" data-en="Surveying Office Berlin">Vermessungsbüro Berlin</div>
-                </div>
+                <div class="testi-card-av testi-card-av--initials">GL</div>
+                <div><div class="testi-card-name">Giullia Levinston</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Ich bin immer sehr zufrieden mit der Octacon. Manuel und sein Team haben mir geholfen, diverse Produkte und Lokationen in 3D zu scannen, die Ergebnisse waren immer super. Das Team ist sehr kompetent und sympathisch."</blockquote>
+              <blockquote class="en-only">"I'm always very satisfied with Octacon. Manuel and his team have helped me 3D-scan various products and locations — the results are always great. Competent, friendly, easy to work with."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">SB</div>
+                <div><div class="testi-card-name">Se Bastian</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Ich hatte das Vergnügen, mit der Octacon Geotechnik GmbH zusammenzuarbeiten und war sehr beeindruckt von ihrer Expertise im Bereich der 3D-Photogrammetrie und Baustellenüberwachung."</blockquote>
+              <blockquote class="en-only">"I had the pleasure of working with Octacon Geotechnik GmbH and was very impressed by their expertise in 3D photogrammetry and construction-site monitoring."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">UD</div>
+                <div><div class="testi-card-name">Urbanum Design</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben unser gesamtes Restaurant auf zwei Stockwerken von der OCGT in 3D scannen und die resultierende 360°-Tour auf Googlemaps stellen lassen. Die Jungs waren nicht nur schnell und mega freundlich, sondern unterstützen uns seitdem auch."</blockquote>
+              <blockquote class="en-only">"We had OCGT 3D-scan our entire two-storey restaurant and publish the resulting 360° tour on Google Maps. The team was fast and incredibly friendly — and they've supported us ever since."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">LM</div>
+                <div><div class="testi-card-name">Laila Melcher</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben unser Ladengeschäft (Fahrrad-Fritsch) vor kleinen Renovierungen von der OCGT einmal in 3D scannen lassen. Hat super geklappt, uns wurde prima geholfen damit."</blockquote>
+              <blockquote class="en-only">"We had OCGT 3D-scan our shop (Fahrrad-Fritsch) before small renovations. It went brilliantly — they helped us out perfectly."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">LF</div>
+                <div><div class="testi-card-name">Ludwig Fritsch</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <!-- Duplicates for seamless loop -->
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Die Kollegen der OCGT unterstützen uns regelmäßig auf der Baustelle – sowohl in der Geotechnik als auch bei Inspektionen schwer zugänglicher Bereiche. Die Drohnenpiloten arbeiten sauber, sicher und liefern extrem detaillierte Bilder."</blockquote>
+              <blockquote class="en-only">"OCGT's team regularly supports us on site — both in geotechnics and inspections of hard-to-reach areas. The drone pilots work cleanly, safely and deliver extremely detailed imagery."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">OR</div>
+                <div><div class="testi-card-name">Oskar Ritter</div><div class="testi-card-role" data-de="vor 5 Monaten · Google" data-en="5 months ago · Google">vor 5 Monaten · Google</div></div>
               </div>
             </div>
             <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Die Grundwasserüberwachung durch OCGT gibt uns die Sicherheit für unsere Tiefbauarbeiten. Kompetente Betreuung und lückenlose Dokumentation."</blockquote>
-              <blockquote class="en-only">"OCGT's groundwater monitoring gives us the assurance we need for our deep construction work. Competent support and thorough documentation."</blockquote>
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben ein 3D Modell unseres 140 Jahre alten Hauses erstellen lassen, als Grundlage für einen Umbau. Die Firma arbeitet absolut professionell, wir waren mit dem Ergebnis sehr zufrieden."</blockquote>
+              <blockquote class="en-only">"We commissioned a 3D model of our 140-year-old house as the basis for a renovation. The company works absolutely professionally — we were very satisfied with the result."</blockquote>
               <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Globe--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Oberbauleiter" data-en="Senior Site Manager">Oberbauleiter</div>
-                  <div class="testi-card-role" data-de="Generalunternehmer Berlin-Mitte" data-en="General contractor Berlin-Mitte">Generalunternehmer Berlin-Mitte</div>
-                </div>
+                <div class="testi-card-av testi-card-av--initials">FM</div>
+                <div><div class="testi-card-name">Florian Malzer</div><div class="testi-card-role" data-de="vor 7 Monaten · Google" data-en="7 months ago · Google">vor 7 Monaten · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wer jemanden sucht, der out of the box denkt und handelt, ist hier richtig. Ich wurde freundlich und professionell beraten, immer gerne wieder. 👍"</blockquote>
+              <blockquote class="en-only">"If you're looking for someone who thinks and acts outside the box, this is the right place. Friendly, professional advice — happy to come back. 👍"</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">KL</div>
+                <div><div class="testi-card-name">Kerstin Lüder</div><div class="testi-card-role" data-de="vor 5 Monaten · Google" data-en="5 months ago · Google">vor 5 Monaten · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Super aufbereitete Ergebnisse aus Drohnenvermessung. Baufortschrittsdokumentationen sind sehr hilfreich für den Projektalltag."</blockquote>
+              <blockquote class="en-only">"Brilliantly prepared drone-survey results. Construction-progress documentation is genuinely useful in day-to-day project work."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">SA</div>
+                <div><div class="testi-card-name">Sim Alo</div><div class="testi-card-role" data-de="vor 4 Monaten · Google" data-en="4 months ago · Google">vor 4 Monaten · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Meine Erfahrungen mit Octacon Geotechnik GmbH waren äußerst positiv. Manuel und sein Team haben sich als äußerst zuverlässig erwiesen, indem sie meine 3D-Scanning-Projekte stets termingerecht und präzise umgesetzt haben."</blockquote>
+              <blockquote class="en-only">"My experience with Octacon Geotechnik GmbH has been extremely positive. Manuel and his team have proven exceptionally reliable, delivering my 3D-scanning projects on time and with precision."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">TM</div>
+                <div><div class="testi-card-name">Tom</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir sind begeistert. Die Technik von Octacon bringt unsere Kreativität auf ein neues Level. Vom ersten Kontakt bis zum Schluss, freundlich, kompetent, wunderbar. Die Ergebnisse sind grossartig."</blockquote>
+              <blockquote class="en-only">"We are thrilled. Octacon's technology takes our creativity to a new level. From first contact to delivery — friendly, competent, wonderful. The results are outstanding."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">GL</div>
+                <div><div class="testi-card-name">Giullia Levinston</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Ich bin immer sehr zufrieden mit der Octacon. Manuel und sein Team haben mir geholfen, diverse Produkte und Lokationen in 3D zu scannen, die Ergebnisse waren immer super. Das Team ist sehr kompetent und sympathisch."</blockquote>
+              <blockquote class="en-only">"I'm always very satisfied with Octacon. Manuel and his team have helped me 3D-scan various products and locations — the results are always great. Competent, friendly, easy to work with."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">SB</div>
+                <div><div class="testi-card-name">Se Bastian</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Ich hatte das Vergnügen, mit der Octacon Geotechnik GmbH zusammenzuarbeiten und war sehr beeindruckt von ihrer Expertise im Bereich der 3D-Photogrammetrie und Baustellenüberwachung."</blockquote>
+              <blockquote class="en-only">"I had the pleasure of working with Octacon Geotechnik GmbH and was very impressed by their expertise in 3D photogrammetry and construction-site monitoring."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">UD</div>
+                <div><div class="testi-card-name">Urbanum Design</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben unser gesamtes Restaurant auf zwei Stockwerken von der OCGT in 3D scannen und die resultierende 360°-Tour auf Googlemaps stellen lassen. Die Jungs waren nicht nur schnell und mega freundlich, sondern unterstützen uns seitdem auch."</blockquote>
+              <blockquote class="en-only">"We had OCGT 3D-scan our entire two-storey restaurant and publish the resulting 360° tour on Google Maps. The team was fast and incredibly friendly — and they've supported us ever since."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">LM</div>
+                <div><div class="testi-card-name">Laila Melcher</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
+              </div>
+            </div>
+            <div class="testi-card" aria-hidden="true">
+              <div class="testi-card-google" aria-hidden="true"><svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg></div>
+              <blockquote class="de-only">„Wir haben unser Ladengeschäft (Fahrrad-Fritsch) vor kleinen Renovierungen von der OCGT einmal in 3D scannen lassen. Hat super geklappt, uns wurde prima geholfen damit."</blockquote>
+              <blockquote class="en-only">"We had OCGT 3D-scan our shop (Fahrrad-Fritsch) before small renovations. It went brilliantly — they helped us out perfectly."</blockquote>
+              <div class="testi-card-who">
+                <div class="testi-card-av testi-card-av--initials">LF</div>
+                <div><div class="testi-card-name">Ludwig Fritsch</div><div class="testi-card-role" data-de="vor 2 Jahren · Google" data-en="2 years ago · Google">vor 2 Jahren · Google</div></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Row 2 — moves right (opposite direction) -->
-        <div class="testi-marquee-row testi-marquee-row--right">
-          <div class="testi-marquee-track">
-            <!-- Set B (different quotes) -->
-            <div class="testi-card">
-              <blockquote class="de-only">„Schnelle Reaktion, sauber dokumentiert, termingerecht — genau das, was man von einem Geotechnik-Partner erwartet."</blockquote>
-              <blockquote class="en-only">"Fast response, cleanly documented, on schedule — exactly what you expect from a geotechnical partner."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Compass--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Planungsleiter" data-en="Planning Director">Planungsleiter</div>
-                  <div class="testi-card-role" data-de="Architekturbüro Berlin" data-en="Architecture firm Berlin">Architekturbüro Berlin</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card">
-              <blockquote class="de-only">„Die Cloud-Auswertung direkt im Browser hat unsere Abstimmungen enorm beschleunigt. Kein Software-Setup mehr nötig."</blockquote>
-              <blockquote class="en-only">"The cloud-based browser viewer sped up our coordination enormously. No more software setup required."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Ruler-Triangle--Streamline-Ultimate.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="BIM-Manager" data-en="BIM Manager">BIM-Manager</div>
-                  <div class="testi-card-role" data-de="Großprojekt · Berlin-Mitte" data-en="Major project · Berlin-Mitte">Großprojekt · Berlin-Mitte</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card">
-              <blockquote class="de-only">„Zentimetergenaue Daten, objektive Messungen — ein unschätzbarer Vorteil bei Nachträgen und Streitfällen."</blockquote>
-              <blockquote class="en-only">"Centimeter-accurate data, objective measurements — an invaluable advantage for claims and disputes."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Construction-Helm--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Baucontroller" data-en="Construction Controller">Baucontroller</div>
-                  <div class="testi-card-role" data-de="Bauträger Brandenburg" data-en="Developer Brandenburg">Bauträger Brandenburg</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card">
-              <blockquote class="de-only">„OCGT denkt mit, liefert pünktlich und kommuniziert klar. Seltene Kombination heute."</blockquote>
-              <blockquote class="en-only">"OCGT thinks proactively, delivers on time and communicates clearly. A rare combination these days."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Globe--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Technischer Leiter" data-en="Technical Director">Technischer Leiter</div>
-                  <div class="testi-card-role" data-de="Generalunternehmer · Berlin" data-en="General contractor · Berlin">Generalunternehmer · Berlin</div>
-                </div>
-              </div>
-            </div>
-            <!-- Duplicate Set B for seamless loop -->
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Schnelle Reaktion, sauber dokumentiert, termingerecht — genau das, was man von einem Geotechnik-Partner erwartet."</blockquote>
-              <blockquote class="en-only">"Fast response, cleanly documented, on schedule — exactly what you expect from a geotechnical partner."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Compass--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Planungsleiter" data-en="Planning Director">Planungsleiter</div>
-                  <div class="testi-card-role" data-de="Architekturbüro Berlin" data-en="Architecture firm Berlin">Architekturbüro Berlin</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Die Cloud-Auswertung direkt im Browser hat unsere Abstimmungen enorm beschleunigt. Kein Software-Setup mehr nötig."</blockquote>
-              <blockquote class="en-only">"The cloud-based browser viewer sped up our coordination enormously. No more software setup required."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Ruler-Triangle--Streamline-Ultimate.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="BIM-Manager" data-en="BIM Manager">BIM-Manager</div>
-                  <div class="testi-card-role" data-de="Großprojekt · Berlin-Mitte" data-en="Major project · Berlin-Mitte">Großprojekt · Berlin-Mitte</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„Zentimetergenaue Daten, objektive Messungen — ein unschätzbarer Vorteil bei Nachträgen und Streitfällen."</blockquote>
-              <blockquote class="en-only">"Centimeter-accurate data, objective measurements — an invaluable advantage for claims and disputes."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Construction-Helm--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Baucontroller" data-en="Construction Controller">Baucontroller</div>
-                  <div class="testi-card-role" data-de="Bauträger Brandenburg" data-en="Developer Brandenburg">Bauträger Brandenburg</div>
-                </div>
-              </div>
-            </div>
-            <div class="testi-card" aria-hidden="true">
-              <blockquote class="de-only">„OCGT denkt mit, liefert pünktlich und kommuniziert klar. Seltene Kombination heute."</blockquote>
-              <blockquote class="en-only">"OCGT thinks proactively, delivers on time and communicates clearly. A rare combination these days."</blockquote>
-              <div class="testi-card-who">
-                <div class="testi-card-av"><img src="logos/Globe--Streamline-Kameleon.png" width="48" height="48" alt="" aria-hidden="true"></div>
-                <div>
-                  <div class="testi-card-name" data-de="Technischer Leiter" data-en="Technical Director">Technischer Leiter</div>
-                  <div class="testi-card-role" data-de="Generalunternehmer · Berlin" data-en="General contractor · Berlin">Generalunternehmer · Berlin</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <p class="testi-note" style="font-size:.9rem;margin-top:1.5rem;font-style:italic;text-align:center" data-de="* Referenzen auf Anfrage. Unternehmensangaben auf Wunsch anonymisiert." data-en="* References on request. Company details anonymised on request.">* Referenzen auf Anfrage. Unternehmensangaben auf Wunsch anonymisiert.</p>
+      <p class="testi-note" style="font-size:.9rem;margin-top:1.5rem;text-align:center">
+        <a class="gbp-cta" href="https://share.google/QjWrlLZ9IeRkWU8em" target="_blank" rel="noopener" data-de="Alle 17 Bewertungen auf Google ansehen →" data-en="View all 17 reviews on Google →">Alle 17 Bewertungen auf Google ansehen →</a>
+      </p>
     </div>
   </div>
 
