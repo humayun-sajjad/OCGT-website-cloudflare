@@ -11406,7 +11406,7 @@ img, video, iframe, canvas, svg { max-width:100%; }
         <div class="trust-marquee-track">
           <div class="trust-marquee-row" data-marquee-row>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Laserscan Berlin">
-              <img src="company_logos/laserscan-berlin.png" width="3682" height="2681" alt="Laserscan Berlin" loading="eager" decoding="async" fetchpriority="low">
+              <img src="company_logos/laserscan-berlin-white.png" width="3682" height="2681" alt="Laserscan Berlin" loading="eager" decoding="async" fetchpriority="low">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Bauwert">
               <img src="company_logos/bauwert.png" width="531" height="108" alt="Bauwert" loading="eager" decoding="async" fetchpriority="low">
@@ -11418,10 +11418,10 @@ img, video, iframe, canvas, svg { max-width:100%; }
               <img src="company_logos/bauer-spezialtiefbau.svg" width="133" height="62" alt="Bauer Spezialtiefbau" loading="lazy" decoding="async">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Keller Grundbau">
-              <img src="company_logos/keller-grundbau.png" width="1772" height="518" alt="Keller Grundbau" loading="lazy" decoding="async">
+              <img src="company_logos/keller-grundbau-white.png" width="1772" height="518" alt="Keller Grundbau" loading="lazy" decoding="async">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Wilderness International">
-              <img src="company_logos/wilderness-international.png" width="1559" height="1276" alt="Wilderness International" loading="lazy" decoding="async">
+              <img src="company_logos/wilderness-international-white.png" width="1559" height="1276" alt="Wilderness International" loading="lazy" decoding="async">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="ip3 Solar">
               <img src="company_logos/ip3-solar.png" width="4252" height="638" alt="ip3 Solar" loading="lazy" decoding="async">
@@ -11438,7 +11438,7 @@ img, video, iframe, canvas, svg { max-width:100%; }
           </div>
           <div class="trust-marquee-row" aria-hidden="true" inert>
             <span class="trust-marquee-item" aria-hidden="true">
-              <img src="company_logos/laserscan-berlin.png" width="3682" height="2681" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img src="company_logos/laserscan-berlin-white.png" width="3682" height="2681" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
               <img src="company_logos/bauwert.png" width="531" height="108" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -11450,10 +11450,10 @@ img, video, iframe, canvas, svg { max-width:100%; }
               <img src="company_logos/bauer-spezialtiefbau.svg" width="133" height="62" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
-              <img src="company_logos/keller-grundbau.png" width="1772" height="518" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img src="company_logos/keller-grundbau-white.png" width="1772" height="518" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
-              <img src="company_logos/wilderness-international.png" width="1559" height="1276" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img src="company_logos/wilderness-international-white.png" width="1559" height="1276" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
               <img src="company_logos/ip3-solar.png" width="4252" height="638" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -11582,6 +11582,19 @@ img, video, iframe, canvas, svg { max-width:100%; }
     [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(3) img,
     [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(10) img {
       filter:none;
+    }
+    /* Mixed-color logos (Laserscan, Keller, Wilderness) — invert/white can't be used
+       because their colored elements would also flip. Default src is the
+       white-version PNG (so dark theme reads correctly); light theme swaps the
+       rendered image to the full-color variant via `content: url(...)`. */
+    [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(1) img {
+      content:url("company_logos/laserscan-berlin.png");
+    }
+    [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(5) img {
+      content:url("company_logos/keller-grundbau.png");
+    }
+    [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(6) img {
+      content:url("company_logos/wilderness-international.png");
     }
     .trust-marquee-item:focus-visible {
       outline:2px solid var(--teal);
