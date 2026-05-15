@@ -5711,42 +5711,17 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   border:none; display:block;
 }
 .live-view > div { width:100%; height:100%; position:relative; }
-/* Workspace-mode iframes (all 4 tabs) — each tab uses PIX4D's /site/.../{map|model}
-   share URL so the native bottom toolbar (2D/3D toggle, zoom, settings, fullscreen,
-   snapshot) is visible. We extend each iframe past the container in all 4 directions
-   so PIX4D's chrome (top header, left "Layers" panel, right "Properties" panel +
-   drawing tools) gets clipped by .live-stage{overflow:hidden}, leaving only the
-   center viewer + annotations + the bottom action toolbar. */
+/* Embed-mode iframes (all 4 tabs) — each tab uses PIX4D's /embed/pro/{map|mesh}/<id>
+   URL, which renders only the viewer (no left "Layers" panel, no right "Properties"
+   panel, no top header). Iframe fills the stage 1:1 — no overflow cropping needed. */
 .live-view[data-view="ortho"] iframe.embed-frame,
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  top:-180px;
-  left:-360px;
-  width:calc(100% + 1800px);
-  height:calc(100% + 280px);
-}
-@media(max-width:960px){
-  .live-view[data-view="ortho"] iframe.embed-frame,
-  .live-view[data-view="pointcloud"] iframe.embed-frame,
-  .live-view[data-view="mesh"] iframe.embed-frame,
-  .live-view[data-view="splat"] iframe.embed-frame {
-    top:-170px;
-    left:-460px;
-    width:calc(100% + 1500px);
-    height:calc(100% + 270px);
-  }
-}
-@media(max-width:560px){
-  .live-view[data-view="ortho"] iframe.embed-frame,
-  .live-view[data-view="pointcloud"] iframe.embed-frame,
-  .live-view[data-view="mesh"] iframe.embed-frame,
-  .live-view[data-view="splat"] iframe.embed-frame {
-    top:-185px;
-    left:-380px;
-    width:calc(100% + 800px);
-    height:calc(100% + 285px);
-  }
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
 }
 
 /* Blocked (cookie consent) state */
@@ -18827,10 +18802,10 @@ const PIX4D_REF = `<iframe class="embed-frame" style="height:280px" src="https:/
 /* Live demo embeds — Ortho & Point Cloud share dataset 2647627; Mesh & Gaussian Splatting
    each have their own dedicated dataset so the embed loads only that layer. Annotations
    set on each PIX4D dataset are visible in the embed via the share token. */
-const EMBED_ORTHO      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652881/model?shareToken=401b653a-96cc-4d63-9461-0a8373f14620" allowfullscreen loading="lazy" title="PIX4D Orthofoto"          sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_POINTCLOUD = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652837/model?shareToken=e659e1b0-f204-47d8-86d3-153cc5ee7994" allowfullscreen loading="lazy" title="PIX4D Punktwolke"         sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_MESH       = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649807/model?shareToken=4174ceda-5d40-43e1-baaa-329e7553985a" allowfullscreen loading="lazy" title="PIX4D 3D Mesh"           sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_SPLAT      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649803/model?shareToken=9e5a8015-e691-4ca4-9322-6acf1be5ba0c" allowfullscreen loading="lazy" title="PIX4D Gaussian Splatting" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+const EMBED_ORTHO      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/map/2652881?shareToken=401b653a-96cc-4d63-9461-0a8373f14620" allowfullscreen loading="lazy" title="PIX4D Orthofoto"          sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+const EMBED_POINTCLOUD = '<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/mesh/2652837?shareToken=e659e1b0-f204-47d8-86d3-153cc5ee7994" allowfullscreen loading="lazy" title="PIX4D Punktwolke"         sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+const EMBED_MESH       = '<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/mesh/2649807?shareToken=4174ceda-5d40-43e1-baaa-329e7553985a" allowfullscreen loading="lazy" title="PIX4D 3D Mesh"           sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+const EMBED_SPLAT      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/mesh/2649803?shareToken=9e5a8015-e691-4ca4-9322-6acf1be5ba0c" allowfullscreen loading="lazy" title="PIX4D Gaussian Splatting" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
 function pendingViewerHTML(deTitle, enTitle){
   return '<div class="live-blocked"><div class="live-blocked-icon live-blocked-icon--spin"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1.6" opacity=".25"/><path d="M22 8a14 14 0 0 1 14 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3 class="live-blocked-title"><span class="de-only">' + deTitle + ' wird vorbereitet</span><span class="en-only">' + enTitle + ' being prepared</span></h3><p class="live-blocked-desc"><span class="de-only">Dieser Viewer wird in Kürze freigeschaltet. Schauen Sie bald wieder vorbei – oder kontaktieren Sie uns für einen direkten Zugriff.</span><span class="en-only">This viewer is being unlocked shortly. Check back soon — or contact us for direct access.</span></p></div>';
 }
