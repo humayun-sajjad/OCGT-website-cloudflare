@@ -421,6 +421,11 @@ def main():
     )
     # Hosts where we can't guarantee .avif / .webp variants exist
     EXTERNAL_HOSTS_SKIP = ('ytimg.com', 'youtube.com', 'googleusercontent.com')
+    # Local paths where R2 has only the source format (PNG/SVG) — wrapping in
+    # <picture> with avif/webp sources would 404 on every fetch and the
+    # browser's <picture> fallback to <img src> isn't always reliable across
+    # CDN error responses. Keep these as plain <img>.
+    PATHS_SKIP_PICTURE = ('company_logos/',)
     def wrap_pictures(text: str) -> str:
         # Skip rewriting if an <img> is already inside a <picture> (idempotent).
         def repl(m):
@@ -431,6 +436,9 @@ def main():
             src = m.group('src')
             # Skip external hosts that don't serve .avif/.webp variants
             if any(host in src for host in EXTERNAL_HOSTS_SKIP):
+                return m.group(0)
+            # Skip local paths that ship without avif/webp variants on R2
+            if any(p in src for p in PATHS_SKIP_PICTURE):
                 return m.group(0)
             base = src.rsplit('.', 1)[0]
             return (
