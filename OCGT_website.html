@@ -5725,6 +5725,8 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   left:-360px;
   width:calc(100% + 800px);
   height:calc(100% + 280px);
+  transform: scale(2.5);
+  transform-origin: 360px 100%;
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
@@ -5735,6 +5737,7 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
     left:-460px;
     width:calc(100% + 980px);
     height:calc(100% + 270px);
+    transform: none;
   }
 }
 @media(max-width:560px){
@@ -5746,6 +5749,7 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
     left:-380px;
     width:calc(100% + 800px);
     height:calc(100% + 285px);
+    transform: none;
   }
 }
 
