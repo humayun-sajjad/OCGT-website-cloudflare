@@ -11410,10 +11410,12 @@ img, video, iframe, canvas, svg { max-width:100%; }
               <img class="logo-light" src="company_logos/laserscan-berlin.png" width="3682" height="2681" alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="low">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Bauwert">
-              <img src="company_logos/bauwert.png" width="531" height="108" alt="Bauwert" loading="eager" decoding="async" fetchpriority="low">
+              <img class="logo-dark" src="company_logos/bauwert-white.png" width="531" height="108" alt="Bauwert" loading="eager" decoding="async" fetchpriority="low">
+              <img class="logo-light" src="company_logos/bauwert.png" width="531" height="108" alt="" aria-hidden="true" loading="eager" decoding="async" fetchpriority="low">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="JTRE Germany">
-              <img src="company_logos/jtre-germany.png" width="5360" height="2573" alt="JTRE Germany" loading="lazy" decoding="async">
+              <img class="logo-dark" src="company_logos/jtre-germany-white.png" width="5360" height="2573" alt="JTRE Germany" loading="lazy" decoding="async">
+              <img class="logo-light" src="company_logos/jtre-germany.png" width="5360" height="2573" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </a>
             <a class="trust-marquee-item" href="#/referenzen" aria-label="Bauer Spezialtiefbau">
               <img src="company_logos/bauer-spezialtiefbau.svg" width="133" height="62" alt="Bauer Spezialtiefbau" loading="lazy" decoding="async">
@@ -11445,10 +11447,12 @@ img, video, iframe, canvas, svg { max-width:100%; }
               <img class="logo-light" src="company_logos/laserscan-berlin.png" width="3682" height="2681" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
-              <img src="company_logos/bauwert.png" width="531" height="108" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img class="logo-dark" src="company_logos/bauwert-white.png" width="531" height="108" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img class="logo-light" src="company_logos/bauwert.png" width="531" height="108" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
-              <img src="company_logos/jtre-germany.png" width="5360" height="2573" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img class="logo-dark" src="company_logos/jtre-germany-white.png" width="5360" height="2573" alt="" aria-hidden="true" loading="lazy" decoding="async">
+              <img class="logo-light" src="company_logos/jtre-germany.png" width="5360" height="2573" alt="" aria-hidden="true" loading="lazy" decoding="async">
             </span>
             <span class="trust-marquee-item" aria-hidden="true">
               <img src="company_logos/bauer-spezialtiefbau.svg" width="133" height="62" alt="" aria-hidden="true" loading="lazy" decoding="async">
@@ -11580,18 +11584,19 @@ img, video, iframe, canvas, svg { max-width:100%; }
       opacity:1;
       transform:scale(1.08);
     }
-    /* JTRE and Bonava are pure-black wordmarks — invert to white in dark theme */
-    .trust-marquee-row > .trust-marquee-item:nth-child(3) img,
+    /* Bonava ships only a black wordmark — invert to white in dark theme.
+       JTRE/Bauwert/Laserscan/Keller/Wilderness use the dual-img CSS toggle
+       below (real white variants on file). */
     .trust-marquee-row > .trust-marquee-item:nth-child(10) img {
       filter:invert(1) brightness(1.05);
     }
-    [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(3) img,
     [data-theme="light"] .trust-marquee-row > .trust-marquee-item:nth-child(10) img {
       filter:none;
     }
-    /* Mixed-color logos (Laserscan, Keller, Wilderness) ship two <img>
-       tags — .logo-dark (white variant) and .logo-light (colored). The
-       data-theme attribute on <html> toggles which one is rendered. */
+    /* Logos with both colored + white variants (Laserscan, Bauwert, JTRE,
+       Keller, Wilderness) ship two <img> tags — .logo-dark (white variant)
+       and .logo-light (colored). data-theme on <html> toggles which one
+       is rendered. */
     .trust-marquee-item .logo-light { display:none; }
     [data-theme="light"] .trust-marquee-item .logo-dark { display:none; }
     [data-theme="light"] .trust-marquee-item .logo-light { display:block; }
