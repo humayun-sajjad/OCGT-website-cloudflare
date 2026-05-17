@@ -5732,17 +5732,21 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  /* PIX4D's right tool palette sits closer to the iframe centre than first
-     assumed (~iframe-x 875 of 1900). To push it off-stage we need a higher
-     scale combined with a transform-origin shifted left so most of the visual
-     push lands on the right side. Scale 2.0 + origin 22% sends the palette
-     ~30-50px past the stage's right edge on a 820px stage. */
+  /* Shift iframe further left so the model lands closer to stage centre,
+     while widening to keep the right edge of the iframe in the same place
+     (so the right palette stays off-stage). The image-rendering hints +
+     backface-visibility help the WebGL canvas composite at higher quality
+     when scaled up by the browser. */
   top:-80px;
-  left:-420px;
-  width:calc(100% + 1140px);
+  left:-520px;
+  width:calc(100% + 1240px);
   height:calc(100% + 200px);
-  transform:scale(2);
+  transform:scale(2) translateZ(0);
   transform-origin:22% 50%;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  image-rendering:-webkit-optimize-contrast;
+  will-change:transform;
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
@@ -5750,10 +5754,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-66px;
-    left:-360px;
-    width:calc(100% + 980px);
+    left:-440px;
+    width:calc(100% + 1060px);
     height:calc(100% + 170px);
-    transform:scale(1.9);
+    transform:scale(1.9) translateZ(0);
     transform-origin:22% 50%;
   }
 }
@@ -5763,10 +5767,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-54px;
-    left:-280px;
-    width:calc(100% + 740px);
+    left:-340px;
+    width:calc(100% + 800px);
     height:calc(100% + 130px);
-    transform:scale(1.65);
+    transform:scale(1.65) translateZ(0);
     transform-origin:21% 50%;
   }
 }
