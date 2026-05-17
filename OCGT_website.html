@@ -5732,25 +5732,24 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  /* More aggressive left shift + slight scale bump:
-     - iframe-left moves the iframe content 60px further left so the model
-       lands well left of stage centre as requested.
-     - scale 2.1 compensates so PIX4D's right tool palette still gets pushed
-       past the stage's right edge after the shift.
-     - filter:contrast/saturate boost edge sharpness to compensate for the
-       browser's bilinear upscale of the WebGL canvas (perceptual sharpening,
-       not pixel-level — the canvas itself can't be re-rasterised). */
+  /* Less left-shift + higher scale: the previous big leftward shift was
+     pulling PIX4D's empty viewer background into the right side of the
+     stage. Reverting to a smaller shift (-440) and bumping scale to 2.3
+     keeps the 3D model centred in the stage and zoomed in enough that it
+     fills the visible area cleanly with no empty space on either side.
+     Right palette still pushed well past the stage edge by the higher scale.
+     filter:contrast/saturate compensates for the WebGL upscale softening. */
   top:-80px;
-  left:-580px;
-  width:calc(100% + 1300px);
+  left:-440px;
+  width:calc(100% + 1180px);
   height:calc(100% + 200px);
-  transform:scale(2.1) translateZ(0);
+  transform:scale(2.3) translateZ(0);
   transform-origin:22% 50%;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
   image-rendering:-webkit-optimize-contrast;
   will-change:transform;
-  filter:contrast(1.06) saturate(1.05);
+  filter:contrast(1.07) saturate(1.05);
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
@@ -5758,10 +5757,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-66px;
-    left:-500px;
-    width:calc(100% + 1120px);
+    left:-380px;
+    width:calc(100% + 1000px);
     height:calc(100% + 170px);
-    transform:scale(2) translateZ(0);
+    transform:scale(2.15) translateZ(0);
     transform-origin:22% 50%;
   }
 }
@@ -5771,10 +5770,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-54px;
-    left:-380px;
-    width:calc(100% + 860px);
+    left:-290px;
+    width:calc(100% + 760px);
     height:calc(100% + 130px);
-    transform:scale(1.75) translateZ(0);
+    transform:scale(1.85) translateZ(0);
     transform-origin:21% 50%;
   }
 }
