@@ -5732,15 +5732,18 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  /* Aggressive right-side overhang to guarantee PIX4D's full tool palette
-     (icon column + collapse "<" toggle) lands off-stage regardless of the
-     panel's expanded state. Tuned against the deployed Cloudflare build. */
+  /* PIX4D's UI renders at a fixed pixel width inside the iframe — their right
+     tool palette sits at a fixed offset from the LEFT, not from the iframe's
+     right edge. So we can't crop it by widening the iframe; we have to scale
+     up enough that the panel slides past the stage's right edge. Origin is
+     shifted off-centre so the scale push the chrome right while keeping the
+     model roughly stage-centred. */
   top:-72px;
-  left:-360px;
-  width:calc(100% + 980px);
-  height:calc(100% + 170px);
-  transform:scale(1.55);
-  transform-origin:50% 50%;
+  left:-400px;
+  width:calc(100% + 1100px);
+  height:calc(100% + 180px);
+  transform:scale(1.8);
+  transform-origin:25% 50%;
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
@@ -5748,10 +5751,11 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-60px;
-    left:-300px;
-    width:calc(100% + 820px);
-    height:calc(100% + 140px);
-    transform:scale(1.45);
+    left:-340px;
+    width:calc(100% + 940px);
+    height:calc(100% + 150px);
+    transform:scale(1.7);
+    transform-origin:24% 50%;
   }
 }
 @media(max-width:560px){
@@ -5760,10 +5764,11 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-50px;
-    left:-240px;
-    width:calc(100% + 620px);
-    height:calc(100% + 110px);
-    transform:scale(1.3);
+    left:-260px;
+    width:calc(100% + 700px);
+    height:calc(100% + 120px);
+    transform:scale(1.5);
+    transform-origin:23% 50%;
   }
 }
 
