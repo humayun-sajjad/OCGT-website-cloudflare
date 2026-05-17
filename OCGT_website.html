@@ -5732,21 +5732,25 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  /* Shift iframe further left so the model lands closer to stage centre,
-     while widening to keep the right edge of the iframe in the same place
-     (so the right palette stays off-stage). The image-rendering hints +
-     backface-visibility help the WebGL canvas composite at higher quality
-     when scaled up by the browser. */
+  /* More aggressive left shift + slight scale bump:
+     - iframe-left moves the iframe content 60px further left so the model
+       lands well left of stage centre as requested.
+     - scale 2.1 compensates so PIX4D's right tool palette still gets pushed
+       past the stage's right edge after the shift.
+     - filter:contrast/saturate boost edge sharpness to compensate for the
+       browser's bilinear upscale of the WebGL canvas (perceptual sharpening,
+       not pixel-level — the canvas itself can't be re-rasterised). */
   top:-80px;
-  left:-520px;
-  width:calc(100% + 1240px);
+  left:-580px;
+  width:calc(100% + 1300px);
   height:calc(100% + 200px);
-  transform:scale(2) translateZ(0);
+  transform:scale(2.1) translateZ(0);
   transform-origin:22% 50%;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
   image-rendering:-webkit-optimize-contrast;
   will-change:transform;
+  filter:contrast(1.06) saturate(1.05);
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
@@ -5754,10 +5758,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-66px;
-    left:-440px;
-    width:calc(100% + 1060px);
+    left:-500px;
+    width:calc(100% + 1120px);
     height:calc(100% + 170px);
-    transform:scale(1.9) translateZ(0);
+    transform:scale(2) translateZ(0);
     transform-origin:22% 50%;
   }
 }
@@ -5767,10 +5771,10 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
     top:-54px;
-    left:-340px;
-    width:calc(100% + 800px);
+    left:-380px;
+    width:calc(100% + 860px);
     height:calc(100% + 130px);
-    transform:scale(1.65) translateZ(0);
+    transform:scale(1.75) translateZ(0);
     transform-origin:21% 50%;
   }
 }
