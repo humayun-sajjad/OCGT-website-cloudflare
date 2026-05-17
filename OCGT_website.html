@@ -5732,30 +5732,29 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  /* PIX4D's UI renders at a fixed pixel width inside the iframe — their right
-     tool palette sits at a fixed offset from the LEFT, not from the iframe's
-     right edge. So we can't crop it by widening the iframe; we have to scale
-     up enough that the panel slides past the stage's right edge. Origin is
-     shifted off-centre so the scale push the chrome right while keeping the
-     model roughly stage-centred. */
-  top:-72px;
-  left:-400px;
-  width:calc(100% + 1100px);
-  height:calc(100% + 180px);
-  transform:scale(1.8);
-  transform-origin:25% 50%;
+  /* PIX4D's right tool palette sits closer to the iframe centre than first
+     assumed (~iframe-x 875 of 1900). To push it off-stage we need a higher
+     scale combined with a transform-origin shifted left so most of the visual
+     push lands on the right side. Scale 2.0 + origin 22% sends the palette
+     ~30-50px past the stage's right edge on a 820px stage. */
+  top:-80px;
+  left:-420px;
+  width:calc(100% + 1140px);
+  height:calc(100% + 200px);
+  transform:scale(2);
+  transform-origin:22% 50%;
 }
 @media(max-width:960px){
   .live-view[data-view="ortho"] iframe.embed-frame,
   .live-view[data-view="pointcloud"] iframe.embed-frame,
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
-    top:-60px;
-    left:-340px;
-    width:calc(100% + 940px);
-    height:calc(100% + 150px);
-    transform:scale(1.7);
-    transform-origin:24% 50%;
+    top:-66px;
+    left:-360px;
+    width:calc(100% + 980px);
+    height:calc(100% + 170px);
+    transform:scale(1.9);
+    transform-origin:22% 50%;
   }
 }
 @media(max-width:560px){
@@ -5763,12 +5762,12 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="pointcloud"] iframe.embed-frame,
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
-    top:-50px;
-    left:-260px;
-    width:calc(100% + 700px);
-    height:calc(100% + 120px);
-    transform:scale(1.5);
-    transform-origin:23% 50%;
+    top:-54px;
+    left:-280px;
+    width:calc(100% + 740px);
+    height:calc(100% + 130px);
+    transform:scale(1.65);
+    transform-origin:21% 50%;
   }
 }
 
