@@ -5523,7 +5523,9 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-chrome {
   display:flex; align-items:center; justify-content:center;
   gap:1.25rem;
-  padding:1.4rem 1.4rem 1rem;
+  /* Match the footer's vertical rhythm exactly so the screen reads as a
+     framed window with symmetric chrome above and below. */
+  padding:.95rem 1.4rem 1.05rem;
   background:linear-gradient(180deg, rgba(20,26,34,.9) 0%, rgba(14,18,24,.85) 100%);
   border-bottom:1px solid rgba(42,157,143,.18);
   position:relative; z-index:2;
@@ -5720,14 +5722,20 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 /* All four tabs now use the workspace URL (/dataset/<id>/{map|model})
    — we crop PIX4D's chrome with negative offsets + transform:scale so
    only the viewer canvas + bottom action toolbar remain visible. */
+/* All four tabs use the workspace /dataset/.../{map|model} URL which renders
+   PIX4D's full chrome (top header, left Layers panel, right tool panel +
+   zoom buttons, bottom dataset toolbar). We push every edge of the iframe
+   past the stage so the chrome lands outside overflow:hidden, then
+   transform:scale zooms the centre viewport so the layer dominates the
+   visible area instead of floating in PIX4D's default fit-to-screen margin. */
 .live-view[data-view="ortho"] iframe.embed-frame,
 .live-view[data-view="pointcloud"] iframe.embed-frame,
 .live-view[data-view="mesh"] iframe.embed-frame,
 .live-view[data-view="splat"] iframe.embed-frame {
-  top:-180px;
-  left:-360px;
-  width:calc(100% + 800px);
-  height:calc(100% + 90px);
+  top:-56px;
+  left:-320px;
+  width:calc(100% + 700px);
+  height:calc(100% + 130px);
   transform:scale(1.55);
   transform-origin:50% 50%;
 }
@@ -5736,11 +5744,11 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="pointcloud"] iframe.embed-frame,
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
-    top:-160px;
-    left:-320px;
-    width:calc(100% + 700px);
-    height:calc(100% + 85px);
-    transform:scale(1.4);
+    top:-50px;
+    left:-280px;
+    width:calc(100% + 600px);
+    height:calc(100% + 110px);
+    transform:scale(1.45);
   }
 }
 @media(max-width:560px){
@@ -5748,11 +5756,11 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   .live-view[data-view="pointcloud"] iframe.embed-frame,
   .live-view[data-view="mesh"] iframe.embed-frame,
   .live-view[data-view="splat"] iframe.embed-frame {
-    top:-140px;
-    left:-260px;
-    width:calc(100% + 580px);
-    height:calc(100% + 80px);
-    transform:scale(1.25);
+    top:-44px;
+    left:-220px;
+    width:calc(100% + 480px);
+    height:calc(100% + 96px);
+    transform:scale(1.3);
   }
 }
 
@@ -5821,42 +5829,62 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
 .live-accept-btn svg { color:#0a1a14; }
 .live-accept-btn:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px; }
 
-/* FOOTER — status bar */
+/* FOOTER — status bar.
+   Two-anchor layout: left column stacks the caption (label) on top of the
+   marketing pitch (demoted subtitle), right column holds the dominant CTA.
+   The pitch is intentionally quiet so the CTA owns the action hierarchy. */
 .live-footer {
   display:grid;
-  grid-template-columns:1fr auto 1fr;
+  grid-template-columns:1fr auto;
+  grid-template-rows:auto auto;
+  column-gap:2rem;
+  row-gap:.18rem;
   align-items:center;
-  gap:1.5rem;
-  padding:1rem 1.4rem;
+  padding:.95rem 1.4rem 1.05rem;
   background:linear-gradient(0deg, rgba(20,26,34,.9) 0%, rgba(14,18,24,.85) 100%);
   border-top:1px solid rgba(42,157,143,.18);
   position:relative; z-index:2;
 }
-.live-footer > .live-footer-metrics { justify-self:start; }
-.live-footer > .live-footer-cta { justify-self:center; }
+.live-footer > .live-footer-metrics { grid-column:1; grid-row:1; justify-self:start; align-self:end; }
+.live-footer > .live-footer-pitch   { grid-column:1; grid-row:2; justify-self:start; align-self:start; }
+.live-footer > .live-footer-cta     { grid-column:2; grid-row:1 / span 2; justify-self:end; align-self:center; }
 .live-footer > .live-footer-pitch {
-  justify-self:end;
-  text-align:right;
-  max-width:none;
-  font-size:.82rem; font-weight:500;
-  line-height:1.35;
-  color:rgba(248,248,224,.72);
-  white-space:nowrap;
-  letter-spacing:.005em;
+  text-align:left;
+  max-width:48ch;
+  margin:0;
+  /* Demoted to a supporting subtitle: smaller, lighter, calmer.
+     The caption above owns the label role; this line whispers context. */
+  font-size:.74rem;
+  font-weight:400;
+  line-height:1.4;
+  color:rgba(248,248,224,.5);
+  letter-spacing:.012em;
+  /* Faint hairline tying the pitch to the caption above without a hard rule */
+  padding-left:1px;
 }
 .live-footer-pitch strong {
-  font-weight:900;
-  color:#f8f8e0;
+  font-weight:600;
+  color:rgba(248,248,224,.82);
 }
 @media (max-width:1100px) {
-  .live-footer > .live-footer-pitch { white-space:normal; max-width:30ch; font-size:.78rem; }
+  .live-footer > .live-footer-pitch { max-width:34ch; font-size:.72rem; }
 }
 @media (max-width:760px) {
-  .live-footer { grid-template-columns:1fr; }
+  .live-footer {
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    row-gap:.6rem;
+  }
   .live-footer > .live-footer-metrics,
   .live-footer > .live-footer-cta,
-  .live-footer > .live-footer-pitch { justify-self:center; text-align:center; }
-  .live-footer > .live-footer-pitch { max-width:none; }
+  .live-footer > .live-footer-pitch {
+    grid-column:1;
+    grid-row:auto;
+    justify-self:center;
+    align-self:center;
+    text-align:center;
+  }
+  .live-footer > .live-footer-pitch { max-width:none; padding-left:0; }
 }
 .live-footer-metrics {
   display:flex; align-items:center; gap:clamp(.6rem, 1.4vw, 1.4rem);
@@ -18831,13 +18859,15 @@ function setLang(l) {
 const PIX4D_2D = `<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/map/2094917?shareToken=e8a47faf-6737-490c-90f3-7b465425252e" allowfullscreen loading="lazy" title="PIX4D 2D Orthofoto" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
 const PIX4D_3D = `<iframe class="embed-frame" src="https://cloud.pix4d.com/embed/pro/mesh/2094917?shareToken=e8a47faf6737490c90f37b465425252e" allowfullscreen loading="lazy" title="PIX4D 3D Mesh" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
 const PIX4D_REF = `<iframe class="embed-frame" style="height:280px" src="https://cloud.pix4d.com/embed/pro/map/2094917?shareToken=e8a47faf-6737-490c-90f3-7b465425252e" allowfullscreen loading="lazy" title="PIX4D Referenzprojekt" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>`;
-/* Live demo embeds — Ortho & Point Cloud share dataset 2647627; Mesh & Gaussian Splatting
-   each have their own dedicated dataset so the embed loads only that layer. Annotations
-   set on each PIX4D dataset are visible in the embed via the share token. */
-const EMBED_ORTHO      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652881/map?shareToken=401b653a-96cc-4d63-9461-0a8373f14620" allowfullscreen loading="lazy" title="PIX4D Orthofoto"          sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_POINTCLOUD = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652837/model?shareToken=e659e1b0-f204-47d8-86d3-153cc5ee7994" allowfullscreen loading="lazy" title="PIX4D Punktwolke"         sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_MESH       = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649807/model?shareToken=4174ceda-5d40-43e1-baaa-329e7553985a" allowfullscreen loading="lazy" title="PIX4D 3D Mesh"           sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
-const EMBED_SPLAT      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649803/model?shareToken=9e5a8015-e691-4ca4-9322-6acf1be5ba0c" allowfullscreen loading="lazy" title="PIX4D Gaussian Splatting" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>';
+/* Live demo embeds — using PIX4D's plain workspace share URLs for all four
+   layers. Note: PIX4D's 3D SPA relies on third-party cookies that modern
+   browsers block by default, so point cloud / mesh / splat may render blank
+   in Chrome/Safari/Firefox; the orthomosaic viewer is cookie-less and tends
+   to render reliably. */
+const EMBED_ORTHO      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652881/map?shareToken=401b653a-96cc-4d63-9461-0a8373f14620" allowfullscreen loading="lazy" title="PIX4D Orthofoto" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>';
+const EMBED_POINTCLOUD = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2652837/model?shareToken=e659e1b0-f204-47d8-86d3-153cc5ee7994" allowfullscreen loading="lazy" title="PIX4D Punktwolke" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>';
+const EMBED_MESH       = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649807/model?shareToken=4174ceda-5d40-43e1-baaa-329e7553985a" allowfullscreen loading="lazy" title="PIX4D 3D Mesh" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>';
+const EMBED_SPLAT      = '<iframe class="embed-frame" src="https://cloud.pix4d.com/dataset/2649803/model?shareToken=9e5a8015-e691-4ca4-9322-6acf1be5ba0c" allowfullscreen loading="lazy" title="PIX4D Gaussian Splatting" sandbox="allow-scripts allow-same-origin allow-popups allow-forms"></iframe>';
 function pendingViewerHTML(deTitle, enTitle){
   return '<div class="live-blocked"><div class="live-blocked-icon live-blocked-icon--spin"><svg width="44" height="44" viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1.6" opacity=".25"/><path d="M22 8a14 14 0 0 1 14 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div><h3 class="live-blocked-title"><span class="de-only">' + deTitle + ' wird vorbereitet</span><span class="en-only">' + enTitle + ' being prepared</span></h3><p class="live-blocked-desc"><span class="de-only">Dieser Viewer wird in Kürze freigeschaltet. Schauen Sie bald wieder vorbei – oder kontaktieren Sie uns für einen direkten Zugriff.</span><span class="en-only">This viewer is being unlocked shortly. Check back soon — or contact us for direct access.</span></p></div>';
 }
@@ -18910,10 +18940,10 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeYT()
   document.querySelectorAll('.vid-ambient').forEach(t => { visibility.set(t, 0); io.observe(t); });
 })();
 function loadAllEmbeds() {
-  const eo=document.getElementById('e-ortho');      if(eo&&!eo.querySelector('iframe')) eo.innerHTML = EMBED_ORTHO || pendingViewerHTML('Orthofoto-Viewer','Orthomap viewer');
+  const eo=document.getElementById('e-ortho');      if(eo&&!eo.querySelector('iframe')) eo.innerHTML = EMBED_ORTHO      || pendingViewerHTML('Orthofoto-Viewer','Orthomap viewer');
   const ep=document.getElementById('e-pointcloud'); if(ep&&!ep.querySelector('iframe')) ep.innerHTML = EMBED_POINTCLOUD || pendingViewerHTML('Punktwolken-Viewer','Point cloud viewer');
-  const em=document.getElementById('e-mesh');       if(em&&!em.querySelector('iframe')) em.innerHTML = EMBED_MESH || pendingViewerHTML('3D Mesh-Viewer','3D mesh viewer');
-  const es=document.getElementById('e-splat');      if(es&&!es.querySelector('iframe')) es.innerHTML = EMBED_SPLAT || pendingViewerHTML('Gaussian Splatting Viewer','Gaussian Splatting viewer');
+  const em=document.getElementById('e-mesh');       if(em&&!em.querySelector('iframe')) em.innerHTML = EMBED_MESH       || pendingViewerHTML('3D Mesh-Viewer','3D mesh viewer');
+  const es=document.getElementById('e-splat');      if(es&&!es.querySelector('iframe')) es.innerHTML = EMBED_SPLAT      || pendingViewerHTML('Gaussian Splatting Viewer','Gaussian Splatting viewer');
   const bo=document.getElementById('b1-ortho');      if(bo&&!bo.querySelector('iframe')) bo.innerHTML = EMBED_ORTHO      || pendingViewerHTML('Orthofoto-Viewer','Orthomap viewer');
   const bp=document.getElementById('b1-pointcloud'); if(bp&&!bp.querySelector('iframe')) bp.innerHTML = EMBED_POINTCLOUD || pendingViewerHTML('Punktwolken-Viewer','Point cloud viewer');
   const bm=document.getElementById('b1-mesh');       if(bm&&!bm.querySelector('iframe')) bm.innerHTML = EMBED_MESH       || pendingViewerHTML('3D Mesh-Viewer','3D mesh viewer');
