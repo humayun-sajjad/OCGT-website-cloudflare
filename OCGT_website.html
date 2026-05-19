@@ -6072,7 +6072,9 @@ button.hero-x-hud:focus-visible { outline:2px solid #2a9d8f; outline-offset:3px;
   animation:sectorMarquee 38s linear infinite;
   will-change:transform;
 }
-.sector-scroll:hover .sector-track { animation-play-state:paused; }
+@media (hover:hover) and (pointer:fine) {
+  .sector-scroll:hover .sector-track { animation-play-state:paused; }
+}
 @keyframes sectorMarquee {
   from { transform:translate3d(0,0,0); }
   to   { transform:translate3d(-50%,0,0); }
@@ -11111,6 +11113,10 @@ body { max-width:100%; }
   .sec-tile h3, .sec-tile h4 { font-size:.88rem; }
   .sec-tile p { font-size:.78rem; }
   .sec-tile p { max-height:60px; }
+  .sector-track { animation-duration:20s; }
+}
+@media (max-width:768px) and (min-width:481px) {
+  .sector-track { animation-duration:26s; }
 }
 
 /* 5. Hero — keep the headline tight on small phones so MESSEN. doesn't
