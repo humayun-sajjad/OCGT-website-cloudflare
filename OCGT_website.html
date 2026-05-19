@@ -17858,9 +17858,6 @@ img, video, iframe, canvas, svg { max-width:100%; }
       <span class="en-only">Let's discuss your project. We'll reach out within <strong>1–2 business days</strong> — no obligation.</span>
     </p>
     <form class="exit-modal-form" id="exit-modal-form" novalidate>
-      <input type="email" class="exit-modal-input" id="exit-modal-email" required
-             placeholder="ihre@email.de"
-             aria-label="E-Mail">
       <button type="submit" class="btn-p exit-modal-submit">
         <span class="de-only">Gespräch starten</span><span class="en-only">Start the conversation</span>
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M1 6.5h11M7 2l4.5 4.5L7 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -19893,7 +19890,6 @@ document.body.classList.remove('has-announce');
   if(!modal) return;
   const card = modal.querySelector('.exit-modal-card');
   const form = document.getElementById('exit-modal-form');
-  const input = document.getElementById('exit-modal-email');
   const success = document.getElementById('exit-modal-success');
   const STORAGE_KEY = 'ocgt_exit_seen';
   const MIN_TIME_ON_PAGE = 15000; /* 15s minimum before showing */
@@ -19919,8 +19915,8 @@ document.body.classList.remove('has-announce');
     lastFocused = document.activeElement;
     modal.setAttribute('aria-hidden', 'false');
     modal.classList.add('is-open');
-    /* Focus email input after animation */
-    setTimeout(() => input?.focus(), 350);
+    /* Focus the CTA button after animation */
+    setTimeout(() => modal.querySelector('.exit-modal-submit')?.focus(), 350);
     /* Lock scroll */
     document.body.style.overflow = 'hidden';
   }
@@ -19950,47 +19946,28 @@ document.body.classList.remove('has-announce');
     else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
   });
 
-  /* Form submission — prefill the main Kontakt form with the entered email
-     and navigate the user there so they can complete the full request. */
+  /* CTA click — close the modal and navigate the visitor to the Kontakt form. */
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = input.value.trim();
-    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-      input.setAttribute('aria-invalid', 'true');
-      input.focus();
-      return;
-    }
-    input.removeAttribute('aria-invalid');
 
     /* Remember dismissal so the popup doesn't reappear */
     try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e){}
 
-    /* Close the modal, navigate to the Kontakt page, and prefill the email field.
-       Uses the SPA router go('contact') when available; falls back to /kontakt. */
     close();
-    const goToContact = () => {
+    setTimeout(() => {
       if (typeof window.go === 'function') {
         window.go('contact');
       } else {
         window.location.href = '/kontakt';
         return;
       }
-      /* Prefill + focus next field after the section renders */
+      /* Focus the first field of the Kontakt form after the section renders */
       setTimeout(() => {
-        const emailField = document.getElementById('f-em');
-        if (emailField) {
-          emailField.value = email;
-          emailField.dispatchEvent(new Event('input', { bubbles: true }));
-          emailField.dispatchEvent(new Event('change', { bubbles: true }));
-          /* Scroll into view and focus the message field so they can finish */
-          emailField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const msg = document.getElementById('f-msg') || document.querySelector('textarea[name="nachricht"], textarea[name="message"]');
-          (msg || emailField).focus();
-        }
+        const firstField = document.getElementById('f-vn') || document.getElementById('f-em');
+        firstField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstField?.focus();
       }, 250);
-    };
-    /* Small defer so the close animation can start before we navigate */
-    setTimeout(goToContact, 120);
+    }, 120);
   });
 
   /* EXIT INTENT DETECTION */
