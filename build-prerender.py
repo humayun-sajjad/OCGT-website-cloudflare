@@ -32,7 +32,12 @@ from pathlib import Path
 # dashboard → Variables and Secrets) so you can change the CDN host without
 # touching code. Local builds fall back to the hardcoded default.
 # Set R2_BASE_URL='' to bundle media into dist/ instead of rewriting to R2.
-R2_BASE_URL   = os.environ.get('R2_BASE_URL', 'https://assets.ocgt.de').rstrip('/')
+# Default to the live public R2 bucket. `assets.ocgt.de` was the previous
+# default but its DNS isn't configured, so local builds without an env var
+# produced HTML pointing at a dead host. Override via the R2_BASE_URL env var
+# (set in Cloudflare Workers/Pages → Variables and Secrets) when a custom
+# domain is configured.
+R2_BASE_URL   = os.environ.get('R2_BASE_URL', 'https://pub-419975cf8acf4b4b9394648eb9ab8ec2.r2.dev').rstrip('/')
 USE_R2        = bool(R2_BASE_URL)
 R2_DIRS       = ['Images', 'logos', 'icons', 'company_logos', 'marketing', 'Videos']
 
@@ -343,6 +348,10 @@ def main():
     css_text = re.sub(r';}', '}', css_text)                           # trailing ;
     css_text = css_text.strip()
     print(f'  ✓ CSS minified: {css_pre_size/1024:.1f} KB → {len(css_text)/1024:.1f} KB')
+    # Note: JS is intentionally NOT minified here. Naive regex-based stripping
+    # breaks regex literals and string-embedded comment markers. Add a proper
+    # tool (terser/esbuild via subprocess) when ready.
+
     # ── Content-hash filenames for cache-busting ─────────────────────
     # Filenames embed the first 8 hex chars of the content's SHA-256.
     # When you change CSS/JS, the filename changes, so the immutable
@@ -581,13 +590,8 @@ def main():
             "}"
             "</script>"
         )
-        # Hero preload — first image actually referenced on the home page.
-        # Generic enough to be safe across routes; harmless if asset is absent.
-        HERO_PRELOAD = (
-            '<link rel="preload" as="image" href="/Images/hero.avif" '
-            'fetchpriority="high" type="image/avif" '
-            'onerror="this.remove()">'
-        )
+        # Hero preload is already in the source HTML (Videos/Hero_final-poster.jpg).
+        # No additional preload injection — source preload is the source of truth.
 
         def optimize_images(html: str) -> str:
             seen = {'first': False}
@@ -692,7 +696,7 @@ def main():
             "  Cache-Control: public, max-age=31536000, immutable\n"
             "/company_logos/*\n"
             "  Cache-Control: public, max-age=31536000, immutable\n"
-            "/04 Videos/*\n"
+            "/Videos/*\n"
             "  Cache-Control: public, max-age=31536000, immutable\n"
             "\n"
             "/*.html\n"

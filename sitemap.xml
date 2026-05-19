@@ -14,30 +14,30 @@
   </url>
 
   <!-- Service Area A — Geotechnik -->
-  <url><loc>https://ocgt.de/geotechnik</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ocgt.de/bauueberwachung</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/vergabe</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/grundwasser</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/beratung</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/geotechnik/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ocgt.de/bauueberwachung/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/vergabe/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/grundwasser/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/beratung/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 
   <!-- Service Area B — Reality Capture -->
-  <url><loc>https://ocgt.de/reality-capture</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ocgt.de/3d-vermessung</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/baustellendokumentation</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/inspektionen</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/digitale-zwillinge</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/thermografie</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/multispektral</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/video-film</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ocgt.de/reality-capture/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ocgt.de/3d-vermessung/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/baustellendokumentation/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/inspektionen/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/digitale-zwillinge/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/thermografie/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/multispektral/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/video-film/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- Company -->
-  <url><loc>https://ocgt.de/technologie</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://ocgt.de/ueber-uns</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://ocgt.de/referenzen</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ocgt.de/kontakt</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ocgt.de/technologie/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://ocgt.de/ueber-uns/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://ocgt.de/referenzen/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ocgt.de/kontakt/</loc><lastmod>2026-05-13</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
 
   <!-- Legal -->
-  <url><loc>https://ocgt.de/impressum</loc><lastmod>2026-05-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://ocgt.de/datenschutz</loc><lastmod>2026-05-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ocgt.de/impressum/</loc><lastmod>2026-05-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://ocgt.de/datenschutz/</loc><lastmod>2026-05-13</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 
 </urlset>

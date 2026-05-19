@@ -212,6 +212,7 @@ company_logos/
 # ─── Local backups + build artifacts ─────────────────────────────────
 _media_backups/
 *.bak
+*.b1bak
 *.original.mp4
 optimize.log
 optimize-videos.log
